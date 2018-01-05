@@ -6,17 +6,27 @@
         <p style="font-size: smaller; font-style: italic">Backup data in the cloud</p>
     </ion-toggle>
 
-  <a class="item item-icon-right" ng-click="clearData()">
-    Clear ALL local data<br>
-    <p style="font-size: smaller; font-style: italic">Deleted data cannot be recovered</p>
-    <i class="icon ion-trash-a" style="color: red"></i>
-  </a>
+	  <a class="item item-icon-right" ng-click="exportData()">
+	    Export data to JSON file<br>
+	    <i class="icon ion-archive" style="color: blue"></i>
+	  </a>
 
-  <a class="item item-icon-right" ng-click="clearData()" ng-show="settings.onlineMode">
-    Clear ALL online data<br>
-    <p style="font-size: smaller; font-style: italic">Deleted data cannot be recovered</p>
-    <i class="icon ion-trash-a" style="color: red"></i>
-  </a>
+	  <a class="item item-icon-right" ng-click="importData()">
+	    Import data from JSON file<br>
+	    <i class="icon ion-android-open" style="color: blue"></i>
+	  </a>
+
+	  <a class="item item-icon-right" ng-click="clearData()">
+	    Clear ALL local data<br>
+	    <p style="font-size: smaller; font-style: italic">Deleted data cannot be recovered</p>
+	    <i class="icon ion-trash-a" style="color: red"></i>
+	  </a>
+
+	  <a class="item item-icon-right" ng-click="clearData()" ng-show="settings.onlineMode">
+	    Clear ALL online data<br>
+	    <p style="font-size: smaller; font-style: italic">Deleted data cannot be recovered</p>
+	    <i class="icon ion-trash-a" style="color: red"></i>
+	  </a>
 
     </ion-list>
   </ion-content>
