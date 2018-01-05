@@ -1,0 +1,94 @@
+  <ion-modal-view>
+    <ion-header-bar class="bar bar-header bar-positive">
+      <h1 class="title">New Asset</h1>
+      <button class="button button-clear button-primary" ng-click="closeModalAdd()">Cancel</button>
+    </ion-header-bar>
+    <ion-content class="padding">
+      <div class="list">
+
+      <div class="row">
+      	<div class="col">
+		  <label class="item item-input item-select">
+		    <div class="input-label">
+		      Month
+		    </div>
+		    <select ng-model="newAsset.month">
+		      <option ng-repeat="month in months">{{month}}</option>
+		    </select>
+		  </label>
+		</div>
+		<div class="col">
+		  <label class="item item-input item-select">
+		    <div class="input-label">
+		      Year
+		    </div>
+		    <select ng-model="newAsset.year">
+		      <option ng-repeat="year in years">{{year}}</option>
+		    </select>
+		  </label>
+		</div>
+	  </div>
+
+	  <label class="item item-input item-select">
+	    <div class="input-label">
+	      Category
+	    </div>
+	    <select ng-model="newAsset.type">
+	      <option>Bank Saving</option>
+	      <option>Cash</option>
+	      <option>Stock</option>
+	      <option>Other</option>
+	    </select>
+	  </label>
+
+	  <label class="item item-input item-select" ng-show="newAsset.type == 'Bank Saving'">
+	    <div class="input-label">
+	      Bank Name
+	    </div>
+	    <select ng-model="newAsset.bank">
+	      <option>POSB</option>
+	      <option>DBS</option>
+	      <option>OCBC</option>
+	      <option>UOB</option>
+	      <option>CITI</option>
+	      <option>STANDARD CHARTERED</option>
+	      <option>MAY</option>
+	    </select>
+	  </label>
+
+	  <label class="item item-input item-select" ng-show="newAsset.type == 'Cash'">
+	    <div class="input-label">
+	      Currency
+	    </div>
+	    <select ng-model="newAsset.currency">
+	      <option>SGD</option>
+	      <option>CNY</option>
+	      <option>USD</option>
+	    </select>
+	  </label>
+
+        <label class="item item-input" ng-show="newAsset.type == 'Bank Saving'">
+          <span class="input-label">Account</span>
+          <input ng-model="newAsset.account" type="text">
+        </label>
+
+        <label class="item item-input" ng-show="newAsset.type == 'Stock'">
+          <span class="input-label">Symbol</span>
+          <input ng-model="newAsset.symbol" type="text">
+        </label>
+
+        <label class="item item-input" ng-show="newAsset.type == 'Other'">
+          <span class="input-label">Remark</span>
+          <input ng-model="newAsset.remark" type="text">
+        </label>
+
+        <label class="item item-input" ng-show="newAsset.type != undefined">
+          <span class="input-label">Amount</span>
+          <input ng-model="newAsset.amount" type="number">
+        </label>
+        <button class="button button-full button-positive" ng-click="addAsset()">Add</button>
+      </div>
+      {{newAsset.type}}
+      {{newAsset.amount}}
+    </ion-content>
+  </ion-modal-view>

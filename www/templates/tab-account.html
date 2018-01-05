@@ -1,9 +1,23 @@
 <ion-view view-title="Account">
   <ion-content>
     <ion-list>
-    <ion-toggle  ng-model="settings.enableFriends">
-        Enable Friends
+    <ion-toggle  ng-model="settings.onlineMode">
+        Online Mode<br>
+        <p style="font-size: smaller; font-style: italic">Backup data in the cloud</p>
     </ion-toggle>
+
+  <a class="item item-icon-right" ng-click="clearData()">
+    Clear ALL local data<br>
+    <p style="font-size: smaller; font-style: italic">Deleted data cannot be recovered</p>
+    <i class="icon ion-trash-a" style="color: red"></i>
+  </a>
+
+  <a class="item item-icon-right" ng-click="clearData()" ng-show="settings.onlineMode">
+    Clear ALL online data<br>
+    <p style="font-size: smaller; font-style: italic">Deleted data cannot be recovered</p>
+    <i class="icon ion-trash-a" style="color: red"></i>
+  </a>
+
     </ion-list>
   </ion-content>
 </ion-view>
