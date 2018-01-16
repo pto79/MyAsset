@@ -1,7 +1,15 @@
+var d = new Date();
+var y = d.getFullYear();
+var m = d.getMonth();
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, $ionicModal, $window) {
   $scope.newAsset = {};
+  $scope.currentDate = {};
+  $scope.currentDate.month = m+1;
+  $scope.currentDate.year = y;
+  console.log($scope.currentDate.month);
+  console.log($scope.currentDate.year);
 
   $scope.myAsset = JSON.parse(localStorage.getItem('assets'));
   if($scope.myAsset == null)
@@ -10,14 +18,48 @@ angular.module('starter.controllers', [])
     calculate();
 
   function calculate() {
-    $scope.myAsset.total = 0;
+    $scope.total = 0;
+    $scope.chartArray = [];
+    $scope.chartData = [];
+    $scope.chartData.push('Bank Name');
+    $scope.chartData.push('Amount');
+    $scope.chartArray.push($scope.chartData);
+
     angular.forEach($scope.myAsset, function(value, key) {
       console.log(value.type);
-      if(value.type == 'Bank Saving')
-        $scope.myAsset.total += Number(value.amount);
-      if(value.type == 'Cash')
-        $scope.myAsset.total += Number(value.amount);
+      if(value.type == 'Bank Saving' && value.month == $scope.currentDate.month && value.year == $scope.currentDate.year)
+        $scope.total += Number(value.amount);
+      if(value.type == 'Cash' && value.month == m+1 && value.year == y)
+        $scope.total += Number(value.amount);
     });
+
+    angular.forEach($scope.myAsset, function(value, key) {
+      $scope.chartData = [];
+      if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
+        $scope.chartData.push(value.bank+':'+value.account);
+        $scope.chartData.push(value.amount);
+        $scope.chartArray.push($scope.chartData);
+      }
+    });
+    console.log($scope.chartArray);
+
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable($scope.chartArray);
+
+        var options = {
+          //title: total,
+          //titleTextStyle: {fontSize: 20},
+          //pieHole: 0.4, for donut chart
+          is3D: true,
+          legend: {position: 'bottom'},
+          //chartArea: {width: 400, height: 600},
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
   }
 
   $ionicModal.fromTemplateUrl('templates/modal-addAsset.html', {
@@ -40,12 +82,9 @@ angular.module('starter.controllers', [])
   }
 
   $scope.years = [];
-  var d = new Date();
-  var n = d.getFullYear();
-  for (i = n; i >= n - 100; i--) { 
+    for (i = y; i >= y - 100; i--) { 
     $scope.years.push(i);
   }
-
   $scope.months = [];
   for (i = 1; i <= 12; i++) { 
     $scope.months.push(i);
@@ -53,7 +92,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('ChatsCtrl', function($scope, Chats) {
+.controller('DataCtrl', function($scope, assetData) {
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -62,9 +101,9 @@ angular.module('starter.controllers', [])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
+  $scope.myAsset = assetData.all();
+  $scope.remove = function(asset) {
+    assetData.remove(asset);
   };
 })
 

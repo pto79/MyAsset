@@ -1,47 +1,22 @@
 angular.module('starter.services', [])
 
-.factory('Chats', function() {
+.factory('assetData', function() {
   // Might use a resource here that returns a JSON array
-
-  // Some fake testing data
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'img/ben.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'img/max.png'
-  }, {
-    id: 2,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'img/adam.jpg'
-  }, {
-    id: 3,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'img/perry.png'
-  }, {
-    id: 4,
-    name: 'Mike Harrington',
-    lastText: 'This is wicked good ice cream.',
-    face: 'img/mike.png'
-  }];
+  var myAsset = JSON.parse(localStorage.getItem('assets'));
+  if(myAsset == null)
+    myAsset = [];
 
   return {
     all: function() {
-      return chats;
+      return myAsset;
     },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
+    remove: function(asset) {
+      myAsset.splice(myAsset.indexOf(asset), 1);
     },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
+    get: function(assetId) {
+      for (var i = 0; i < myAsset.length; i++) {
+        if (myAsset[i].id === parseInt(assetId)) {
+          return myAsset[i];
         }
       }
       return null;

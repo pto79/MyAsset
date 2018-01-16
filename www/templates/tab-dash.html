@@ -1,4 +1,4 @@
-<ion-view view-title="">
+<ion-view view-title="My Asset">
   <ion-nav-buttons side="left" ng-show="false">
     <button class="button button-icon button-clear ion-earth" ng-click="translate()"></button>
   </ion-nav-buttons>  
@@ -6,6 +6,31 @@
     <button class="button button-icon button-clear ion-plus-circled" ng-click="modalAdd.show()"></button>
   </ion-nav-buttons>
   <ion-content class="padding">
-    <h1>{{myAsset.total}}</h1>
+
+      <div class="row">
+      	<div class="col">
+		  <label class="item item-input item-select">
+		    <div class="input-label">
+		      Month
+		    </div>
+		    <select>
+		      <option ng-repeat="month in months" ng-selected="month == currentDate.month">{{month}}</option>
+		    </select>
+		  </label>
+		</div>
+		<div class="col">
+		  <label class="item item-input item-select">
+		    <div class="input-label">
+		      Year
+		    </div>
+		    <select>
+		      <option ng-repeat="year in years" ng-selected="year == currentDate.year">{{year}}</option>
+		    </select>
+		  </label>
+		</div>
+	  </div>
+
+	<h2 class="piechartheader" align="center">{{total}}</h2>
+    <div id="donutchart" style="width: 400px; height: 400px;"></div>
   </ion-content>
 </ion-view>
