@@ -6,10 +6,10 @@ angular.module('starter.controllers', [])
 .controller('DashCtrl', function($scope, $ionicModal, $window, assetData) {
 
   function resetModal() {
-    $scope.newAsset = {};
-    $scope.newAsset.type = 'Bank Saving';
-    $scope.newAsset.bank = 'OCBC';
-    $scope.newAsset.currency = 'SGD';
+    $scope.modalData = {};
+    $scope.modalData.type = 'Bank Saving';
+    $scope.modalData.bank = 'OCBC';
+    $scope.modalData.currency = 'SGD';
   }
 
   $scope.currentDate = {};
@@ -82,8 +82,8 @@ angular.module('starter.controllers', [])
   });
 
   $scope.addAsset = function() {
-    $scope.myAsset.push($scope.newAsset);
-    localStorage.setItem('assets', JSON.stringify($scope.myAsset));
+    assetData.add($scope.modalData);
+    assetData.save();
     $scope.modalAsset.hide();
     resetModal();
     calculate();
@@ -111,12 +111,9 @@ angular.module('starter.controllers', [])
 
 })
 
+
 .controller('DataCtrl', function($scope, $ionicModal, assetData) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
+
   $scope.$on('$ionicView.enter', function(e) {
     $scope.myAsset = assetData.all();
   });
@@ -132,14 +129,14 @@ angular.module('starter.controllers', [])
   });
 
   $scope.updateAsset = function() {
-    $scope.myAsset.push($scope.newAsset);
-    localStorage.setItem('assets', JSON.stringify($scope.myAsset));
+    assetData.update($scope.modalData);
+    assetData.save();
     $scope.modalAsset.hide();
   }
 
   $scope.openModalAsset = function(asset) {
     $scope.modalStatus = 'update';
-    $scope.newAsset = assetData.get(asset);
+    $scope.modalData = assetData.get(asset);
     $scope.modalAsset.show();
   }
 
@@ -148,9 +145,6 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
-})
 
 .controller('AccountCtrl', function($scope, $ionicPopup) {
 

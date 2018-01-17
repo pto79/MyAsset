@@ -13,7 +13,7 @@
 		    <div class="input-label">
 		      Month
 		    </div>
-		    <select ng-model="newAsset.month">
+		    <select ng-model="modalData.month">
 		      <option ng-repeat="month in months">{{month}}</option>
 		    </select>
 		  </label>
@@ -23,7 +23,7 @@
 		    <div class="input-label">
 		      Year
 		    </div>
-		    <select ng-model="newAsset.year">
+		    <select ng-model="modalData.year">
 		      <option ng-repeat="year in years">{{year}}</option>
 		    </select>
 		  </label>
@@ -34,7 +34,7 @@
 	    <div class="input-label">
 	      Category
 	    </div>
-	    <select ng-model="newAsset.type">
+	    <select ng-model="modalData.type">
 	      <option>Bank Saving</option>
 	      <option>Cash</option>
 	      <option>Stock</option>
@@ -42,11 +42,11 @@
 	    </select>
 	  </label>
 
-	  <label class="item item-input item-select" ng-show="newAsset.type == 'Bank Saving'">
+	  <label class="item item-input item-select" ng-show="modalData.type == 'Bank Saving'">
 	    <div class="input-label">
 	      Bank Name
 	    </div>
-	    <select ng-model="newAsset.bank">
+	    <select ng-model="modalData.bank">
 	      <option>POSB</option>
 	      <option>DBS</option>
 	      <option>OCBC</option>
@@ -57,31 +57,31 @@
 	    </select>
 	  </label>
 
-        <label class="item item-input" ng-show="newAsset.type == 'Bank Saving'">
+        <label class="item item-input" ng-show="modalData.type == 'Bank Saving'">
           <span class="input-label">Account</span>
-          <input ng-model="newAsset.account" type="text">
+          <input ng-model="modalData.account" type="text">
         </label>
 
-        <label class="item item-input" ng-show="newAsset.type == 'Stock'">
+        <label class="item item-input" ng-show="modalData.type == 'Stock'">
           <span class="input-label">Symbol</span>
-          <input ng-model="newAsset.symbol" type="text">
+          <input ng-model="modalData.symbol" type="text">
         </label>
 
-        <label class="item item-input" ng-show="newAsset.type == 'Other'">
+        <label class="item item-input" ng-show="modalData.type == 'Other'">
           <span class="input-label">Remark</span>
-          <input ng-model="newAsset.remark" type="text">
+          <input ng-model="modalData.remark" type="text">
         </label>
 
-        <label class="item item-input" ng-show="newAsset.type != undefined">
+        <label class="item item-input" ng-show="modalData.type != undefined">
           <span class="input-label">Amount</span>
-          <input ng-model="newAsset.amount" type="number">
+          <input ng-model="modalData.amount" type="number">
         </label>
 
 	  <label class="item item-input item-select">
 	    <div class="input-label">
 	      Currency
 	    </div>
-	    <select ng-model="newAsset.currency">
+	    <select ng-model="modalData.currency">
 	      <option>SGD</option>
 	      <option>CNY</option>
 	      <option>USD</option>
