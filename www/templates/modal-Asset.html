@@ -1,7 +1,8 @@
   <ion-modal-view>
     <ion-header-bar class="bar bar-header bar-positive">
-      <h1 class="title">New Asset</h1>
-      <button class="button button-clear button-primary" ng-click="closeModalAdd()">Cancel</button>
+      <h1 class="title" ng-show="modalStatus == 'add'">New Asset</h1>
+      <h1 class="title" ng-show="modalStatus == 'update'">Edit Asset</h1>
+      <button class="button button-clear button-primary" ng-click="closeModalAsset()">Cancel</button>
     </ion-header-bar>
     <ion-content class="padding">
       <div class="list">
@@ -56,17 +57,6 @@
 	    </select>
 	  </label>
 
-	  <label class="item item-input item-select" ng-show="newAsset.type == 'Cash'">
-	    <div class="input-label">
-	      Currency
-	    </div>
-	    <select ng-model="newAsset.currency">
-	      <option>SGD</option>
-	      <option>CNY</option>
-	      <option>USD</option>
-	    </select>
-	  </label>
-
         <label class="item item-input" ng-show="newAsset.type == 'Bank Saving'">
           <span class="input-label">Account</span>
           <input ng-model="newAsset.account" type="text">
@@ -86,7 +76,20 @@
           <span class="input-label">Amount</span>
           <input ng-model="newAsset.amount" type="number">
         </label>
-        <button class="button button-full button-positive" ng-click="addAsset()">Add</button>
+
+	  <label class="item item-input item-select">
+	    <div class="input-label">
+	      Currency
+	    </div>
+	    <select ng-model="newAsset.currency">
+	      <option>SGD</option>
+	      <option>CNY</option>
+	      <option>USD</option>
+	    </select>
+	  </label>
+
+        <button class="button button-full button-positive" ng-click="addAsset()" ng-show="modalStatus == 'add'">Add</button>
+        <button class="button button-full button-positive" ng-click="updateAsset()" ng-show="modalStatus == 'update'">Update</button>
       </div>
 
     </ion-content>

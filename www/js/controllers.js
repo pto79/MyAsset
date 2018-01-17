@@ -4,18 +4,25 @@ var m = d.getMonth();
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, $ionicModal, $window) {
-  $scope.newAsset = {};
+
+  function resetModal() {
+    $scope.newAsset = {};
+    $scope.newAsset.type = 'Bank Saving';
+    $scope.newAsset.bank = 'OCBC';
+    $scope.newAsset.currency = 'SGD';
+  }
+
   $scope.currentDate = {};
   $scope.currentDate.month = m+1;
   $scope.currentDate.year = y;
-  console.log($scope.currentDate.month);
-  console.log($scope.currentDate.year);
 
   $scope.myAsset = JSON.parse(localStorage.getItem('assets'));
   if($scope.myAsset == null)
     $scope.myAsset = [];
-  else
+  else {
+    resetModal();
     calculate();
+  }
 
   function calculate() {
     $scope.total = 0;
@@ -27,16 +34,20 @@ angular.module('starter.controllers', [])
 
     angular.forEach($scope.myAsset, function(value, key) {
       console.log(value.type);
-      if(value.type == 'Bank Saving' && value.month == $scope.currentDate.month && value.year == $scope.currentDate.year)
-        $scope.total += Number(value.amount);
-      if(value.type == 'Cash' && value.month == m+1 && value.year == y)
-        $scope.total += Number(value.amount);
+      if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year)
+        if(value.type == 'Bank Saving' || value.type == 'Cash')
+          $scope.total += Number(value.amount);
     });
 
     angular.forEach($scope.myAsset, function(value, key) {
       $scope.chartData = [];
       if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
-        $scope.chartData.push(value.bank+':'+value.account);
+        if(value.type == 'Bank Saving')
+          $scope.chartData.push(value.bank+':'+value.account);
+        if(value.type == 'Cash')
+          $scope.chartData.push(value.type+':'+value.remark);
+        if(value.type == 'Stock')
+          $scope.chartData.push(value.type+':'+value.symbol);
         $scope.chartData.push(value.amount);
         $scope.chartArray.push($scope.chartData);
       }
@@ -58,27 +69,33 @@ angular.module('starter.controllers', [])
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-        chart.draw(data, options);
+        //chart.draw(data, options);
       }
   }
 
-  $ionicModal.fromTemplateUrl('templates/modal-addAsset.html', {
+  $ionicModal.fromTemplateUrl('templates/modal-Asset.html', {
     scope: $scope
   }).then(function(modal) {
-    $scope.modalAdd = modal;
+    $scope.modalAsset = modal;
   });
 
   $scope.addAsset = function() {
     $scope.myAsset.push($scope.newAsset);
     localStorage.setItem('assets', JSON.stringify($scope.myAsset));
-    $scope.newAsset = {};
-    $scope.modalAdd.hide();
+    $scope.modalAsset.hide();
+    resetModal();
     calculate();
   }
 
-  $scope.closeModalAdd = function() {
-    $scope.newAsset = {}; //clear the modal
-    $scope.modalAdd.hide();
+  $scope.openModalAsset = function() {
+    $scope.modalStatus = 'add';
+    resetModal();
+    $scope.modalAsset.show();
+  }
+
+  $scope.closeModalAsset = function() {
+    resetModal();
+    $scope.modalAsset.hide();
   }
 
   $scope.years = [];
@@ -92,7 +109,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('DataCtrl', function($scope, assetData) {
+.controller('DataCtrl', function($scope, $ionicModal, assetData) {
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -105,6 +122,28 @@ angular.module('starter.controllers', [])
   $scope.remove = function(asset) {
     assetData.remove(asset);
   };
+
+  $ionicModal.fromTemplateUrl('templates/modal-Asset.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modalAsset = modal;
+  });
+
+  $scope.updateAsset = function() {
+    $scope.myAsset.push($scope.newAsset);
+    localStorage.setItem('assets', JSON.stringify($scope.myAsset));
+    $scope.modalAsset.hide();
+  }
+
+  $scope.openModalAsset = function(asset) {
+    $scope.modalStatus = 'update';
+    $scope.newAsset = assetData.get(asset);
+    $scope.modalAsset.show();
+  }
+
+  $scope.closeModalAsset = function() {
+    $scope.modalAsset.hide();
+  }
 })
 
 .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {

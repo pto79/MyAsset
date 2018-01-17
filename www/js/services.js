@@ -13,13 +13,8 @@ angular.module('starter.services', [])
     remove: function(asset) {
       myAsset.splice(myAsset.indexOf(asset), 1);
     },
-    get: function(assetId) {
-      for (var i = 0; i < myAsset.length; i++) {
-        if (myAsset[i].id === parseInt(assetId)) {
-          return myAsset[i];
-        }
-      }
-      return null;
+    get: function(asset) {
+      return myAsset[myAsset.indexOf(asset)];
     }
   };
 });
