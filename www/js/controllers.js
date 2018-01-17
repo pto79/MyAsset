@@ -3,7 +3,7 @@ var y = d.getFullYear();
 var m = d.getMonth();
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope, $ionicModal, $window) {
+.controller('DashCtrl', function($scope, $ionicModal, $window, assetData) {
 
   function resetModal() {
     $scope.newAsset = {};
@@ -16,13 +16,15 @@ angular.module('starter.controllers', [])
   $scope.currentDate.month = m+1;
   $scope.currentDate.year = y;
 
-  $scope.myAsset = JSON.parse(localStorage.getItem('assets'));
-  if($scope.myAsset == null)
-    $scope.myAsset = [];
-  else {
-    resetModal();
-    calculate();
-  }
+  $scope.$on('$ionicView.enter', function(e) {
+    $scope.myAsset = assetData.all();
+    if($scope.myAsset == null)
+      $scope.myAsset = [];
+    else {
+      resetModal();
+      calculate();
+    }
+  })
 
   function calculate() {
     $scope.total = 0;
@@ -69,7 +71,7 @@ angular.module('starter.controllers', [])
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-        //chart.draw(data, options);
+        chart.draw(data, options);
       }
   }
 
@@ -115,10 +117,10 @@ angular.module('starter.controllers', [])
   // To listen for when this page is active (for example, to refresh data),
   // listen for the $ionicView.enter event:
   //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+  $scope.$on('$ionicView.enter', function(e) {
+    $scope.myAsset = assetData.all();
+  });
 
-  $scope.myAsset = assetData.all();
   $scope.remove = function(asset) {
     assetData.remove(asset);
   };
