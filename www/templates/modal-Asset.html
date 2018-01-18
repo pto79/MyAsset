@@ -9,23 +9,19 @@
 
       <div class="row">
       	<div class="col">
-		  <label class="item item-input item-select">
+		  <label class="item item-input">
 		    <div class="input-label">
 		      Month
 		    </div>
-		    <select ng-model="modalData.month">
-		      <option ng-repeat="month in months">{{month}}</option>
-		    </select>
+		    <input ng-model="modalData.month" type="number" ngMin="1" ngMax="12" required>
 		  </label>
 		</div>
 		<div class="col">
-		  <label class="item item-input item-select">
+		  <label class="item item-input">
 		    <div class="input-label">
 		      Year
 		    </div>
-		    <select ng-model="modalData.year">
-		      <option ng-repeat="year in years">{{year}}</option>
-		    </select>
+		    <input ng-model="modalData.year" type="number" ngMin="modalData.year-100" ngMax="modalData.year" required>
 		  </label>
 		</div>
 	  </div>

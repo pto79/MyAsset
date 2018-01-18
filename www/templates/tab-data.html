@@ -5,19 +5,19 @@
 
         <div ng-show="asset.type == 'Bank Saving'">
           <i class="icon fa fa-bank"></i>
-          <h2>{{asset.currency}} {{asset.amount}} {{asset.month}}/{{asset.year}}</h2>
+          <h2>{{asset.amount}}({{asset.currency}}) {{asset.month}}/{{asset.year}}</h2>
           <i class="icon ion-chevron-left icon-accessory"></i>
         </div>
 
         <div ng-show="asset.type == 'Cash'">
           <i class="icon fa fa-money"></i>
-          <h2>{{asset.currency}} {{asset.amount}} {{asset.month}}/{{asset.year}}</h2>
+          <h2>{{asset.amount}}({{asset.currency}}) {{asset.month}}/{{asset.year}}</h2>
           <i class="icon ion-chevron-left icon-accessory"></i>
         </div>
 
         <div ng-show="asset.type == 'Stock'">
           <i class="icon fa fa-line-chart"></i>
-          <h2>{{asset.stock}} {{asset.currency}} {{asset.amount}} {{asset.month}}/{{asset.year}}</h2>
+          <h2>{{asset.symbol}} {{asset.amount}}({{asset.currency}}) {{asset.month}}/{{asset.year}}</h2>
           <i class="icon ion-chevron-left icon-accessory"></i>
         </div>
 

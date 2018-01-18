@@ -10,20 +10,14 @@ angular.module('starter.controllers', [])
     $scope.modalData.type = 'Bank Saving';
     $scope.modalData.bank = 'OCBC';
     $scope.modalData.currency = 'SGD';
+    $scope.modalData.year = y;
+    $scope.modalData.month = m+1;
   }
-
-  $scope.currentDate = {};
-  $scope.currentDate.month = m+1;
-  $scope.currentDate.year = y;
 
   $scope.$on('$ionicView.enter', function(e) {
     $scope.myAsset = assetData.all();
-    if($scope.myAsset == null)
-      $scope.myAsset = [];
-    else {
-      resetModal();
-      calculate();
-    }
+    resetModal();
+    calculate();
   })
 
   function calculate() {
@@ -35,15 +29,14 @@ angular.module('starter.controllers', [])
     $scope.chartArray.push($scope.chartData);
 
     angular.forEach($scope.myAsset, function(value, key) {
-      console.log(value.type);
-      if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year)
+      if(value.month == m+1 && value.year == y)
         if(value.type == 'Bank Saving' || value.type == 'Cash')
           $scope.total += Number(value.amount);
     });
 
     angular.forEach($scope.myAsset, function(value, key) {
       $scope.chartData = [];
-      if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
+      if(value.month == m+1 && value.year == y) {
         if(value.type == 'Bank Saving')
           $scope.chartData.push(value.bank+':'+value.account);
         if(value.type == 'Cash')
@@ -71,19 +64,20 @@ angular.module('starter.controllers', [])
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-        chart.draw(data, options);
+        //chart.draw(data, options);
       }
   }
 
-  $ionicModal.fromTemplateUrl('templates/modal-Asset.html', {
+  $ionicModal.fromTemplateUrl('templates/modal-asset.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modalAsset = modal;
   });
 
   $scope.addAsset = function() {
+    console.log($scope.modalData);
     assetData.add($scope.modalData);
-    assetData.save();
+    assetData.save($scope.myAsset);
     $scope.modalAsset.hide();
     resetModal();
     calculate();
@@ -122,21 +116,25 @@ angular.module('starter.controllers', [])
     assetData.remove(asset);
   };
 
-  $ionicModal.fromTemplateUrl('templates/modal-Asset.html', {
+  $ionicModal.fromTemplateUrl('templates/modal-asset.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modalAsset = modal;
   });
 
   $scope.updateAsset = function() {
-    assetData.update($scope.modalData);
-    assetData.save();
+    assetData.set($scope.modalData);
+    assetData.save($scope.myAsset);
     $scope.modalAsset.hide();
   }
 
   $scope.openModalAsset = function(asset) {
     $scope.modalStatus = 'update';
+    //$scope.modalData = assetData.get(asset);
+    console.log(assetData.get(asset));
     $scope.modalData = assetData.get(asset);
+    $scope.modalData.month = parseInt($scope.modalData.month);
+    $scope.modalData.year = parseInt($scope.modalData.year);
     $scope.modalAsset.show();
   }
 

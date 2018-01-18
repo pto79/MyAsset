@@ -6,8 +6,11 @@ angular.module('starter.services', [])
 
   return {
     all: function() {
-      myAsset = JSON.parse(localStorage.getItem('assets'));
-      if(myAsset == null) myAsset = [];
+      myAsset = localStorage.getItem('assets');
+      if(myAsset == "undefined" || myAsset == null)
+        myAsset = [];
+      else
+        myAsset = JSON.parse(myAsset);
       return myAsset;
     },
     save: function(assets) {
