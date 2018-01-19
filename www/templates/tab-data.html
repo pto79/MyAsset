@@ -1,7 +1,7 @@
 <ion-view view-title="Data">
   <ion-content>
     <ion-list>
-      <ion-item class="item-remove-animate item-icon-left item-icon-right" ng-repeat="asset in myAsset" type="item-text-wrap" href="#/tab/chats/{{chat.id}}">
+      <ion-item class="item-remove-animate item-icon-left item-icon-right" ng-repeat="asset in myAsset" type="item-text-wrap" ng-click="openModalAsset(asset)">
 
         <div ng-show="asset.type == 'Bank Saving'">
           <i class="icon fa fa-bank"></i>

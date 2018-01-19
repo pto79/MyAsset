@@ -13,8 +13,8 @@
 		    <div class="input-label">
 		      Month
 		    </div>
-		    <select>
-		      <option ng-repeat="month in months" ng-selected="month == currentDate.month">{{month}}</option>
+		    <select ng-model="modalData.month">
+		      <option ng-repeat="month in months" ng-selected="month == modalData.month">{{month}}</option>
 		    </select>
 		  </label>
 		</div>
@@ -23,8 +23,8 @@
 		    <div class="input-label">
 		      Year
 		    </div>
-		    <select>
-		      <option ng-repeat="year in years" ng-selected="year == currentDate.year">{{year}}</option>
+		    <select ng-model="modalData.year">
+		      <option ng-repeat="year in years" ng-selected="year == modalData.year">{{year}}</option>
 		    </select>
 		  </label>
 		</div>

@@ -13,7 +13,9 @@
 		    <div class="input-label">
 		      Month
 		    </div>
-		    <input ng-model="modalData.month" type="number" ngMin="1" ngMax="12" required>
+		    <select ng-model="modalData.month">
+		      <option ng-repeat="month in months" ng-selected="month == modalData.month">{{month}}</option>
+		    </select>
 		  </label>
 		</div>
 		<div class="col">
@@ -21,7 +23,9 @@
 		    <div class="input-label">
 		      Year
 		    </div>
-		    <input ng-model="modalData.year" type="number" ngMin="modalData.year-100" ngMax="modalData.year" required>
+		    <select ng-model="modalData.year">
+		      <option ng-repeat="year in years" ng-selected="year == modalData.year">{{year}}</option>
+		    </select>
 		  </label>
 		</div>
 	  </div>

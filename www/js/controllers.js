@@ -1,6 +1,12 @@
 var d = new Date();
 var y = d.getFullYear();
 var m = d.getMonth();
+var ys = [];
+var ms = [];
+for (i = y; i >= y - 100; i--) ys.push(i.toString());
+for (i = 1; i <= 12; i++) ms.push(i.toString());
+
+
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, $ionicModal, $window, assetData) {
@@ -10,8 +16,8 @@ angular.module('starter.controllers', [])
     $scope.modalData.type = 'Bank Saving';
     $scope.modalData.bank = 'OCBC';
     $scope.modalData.currency = 'SGD';
-    $scope.modalData.year = y;
-    $scope.modalData.month = m+1;
+    $scope.modalData.year = y.toString();
+    $scope.modalData.month = (m+1).toString();
   }
 
   $scope.$on('$ionicView.enter', function(e) {
@@ -75,7 +81,6 @@ angular.module('starter.controllers', [])
   });
 
   $scope.addAsset = function() {
-    console.log($scope.modalData);
     assetData.add($scope.modalData);
     assetData.save($scope.myAsset);
     $scope.modalAsset.hide();
@@ -90,18 +95,11 @@ angular.module('starter.controllers', [])
   }
 
   $scope.closeModalAsset = function() {
-    resetModal();
     $scope.modalAsset.hide();
   }
 
-  $scope.years = [];
-    for (i = y; i >= y - 100; i--) { 
-    $scope.years.push(i);
-  }
-  $scope.months = [];
-  for (i = 1; i <= 12; i++) { 
-    $scope.months.push(i);
-  }
+  $scope.years = ys;
+  $scope.months = ms;
 
 })
 
@@ -114,6 +112,7 @@ angular.module('starter.controllers', [])
 
   $scope.remove = function(asset) {
     assetData.remove(asset);
+    assetData.save($scope.myAsset);
   };
 
   $ionicModal.fromTemplateUrl('templates/modal-asset.html', {
@@ -130,17 +129,17 @@ angular.module('starter.controllers', [])
 
   $scope.openModalAsset = function(asset) {
     $scope.modalStatus = 'update';
-    //$scope.modalData = assetData.get(asset);
-    console.log(assetData.get(asset));
     $scope.modalData = assetData.get(asset);
-    $scope.modalData.month = parseInt($scope.modalData.month);
-    $scope.modalData.year = parseInt($scope.modalData.year);
     $scope.modalAsset.show();
   }
 
   $scope.closeModalAsset = function() {
     $scope.modalAsset.hide();
   }
+
+  $scope.years = ys;
+  $scope.months = ms;
+
 })
 
 
