@@ -13,8 +13,8 @@
 		    <div class="input-label">
 		      Month
 		    </div>
-		    <select ng-model="modalData.month">
-		      <option ng-repeat="month in months" ng-selected="month == modalData.month">{{month}}</option>
+		    <select ng-model="currentDate.month" ng-change="doCalculate()">
+		      <option ng-repeat="month in months" ng-selected="month == currentDate.month">{{month}}</option>
 		    </select>
 		  </label>
 		</div>
@@ -23,14 +23,14 @@
 		    <div class="input-label">
 		      Year
 		    </div>
-		    <select ng-model="modalData.year">
-		      <option ng-repeat="year in years" ng-selected="year == modalData.year">{{year}}</option>
+		    <select ng-model="currentDate.year" ng-change="doCalculate()">
+		      <option ng-repeat="year in years" ng-selected="year == currentDate.year">{{year}}</option>
 		    </select>
 		  </label>
 		</div>
 	  </div>
 
 	<h2 class="piechartheader" align="center">{{total}}</h2>
-    <div id="donutchart" style="width: 400px; height: 400px;"></div>
+    <div id="chart"></div>
   </ion-content>
 </ion-view>
