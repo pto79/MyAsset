@@ -13,15 +13,7 @@ angular.module('starter.controllers', [])
   $scope.currentDate = {};
   $scope.currentDate.month = (m+1).toString();
   $scope.currentDate.year = y.toString();
-
-  function resetModal() {
-    $scope.modalData = {};
-    $scope.modalData.type = 'Bank Saving';
-    $scope.modalData.bank = 'OCBC';
-    $scope.modalData.currency = 'SGD';
-    $scope.modalData.year = y.toString();
-    $scope.modalData.month = (m+1).toString();
-  }
+  $scope.chartStatus = 'pie';
 
   $scope.$on('$ionicView.enter', function(e) {
     $scope.myAsset = assetData.all();
@@ -42,12 +34,18 @@ angular.module('starter.controllers', [])
       if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year)
         if(value.type == 'Bank Saving' || value.type == 'Cash')
           $scope.total += Number(value.amount);
+        //if(value.type == 'Stock') todo
     });
 
     angular.forEach($scope.myAsset, function(value, key) {
       $scope.chartData = [];
       if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
+        if(value.type == 'Bank Saving')
+          $scope.chartData.push(value.bank);
+        if(value.type == 'Cash')
           $scope.chartData.push(value.type);
+        //if(value.type == 'Stock')
+        //if(value.type == 'Other')
         $scope.chartData.push(value.amount);
         $scope.chartArray.push($scope.chartData);
       }
@@ -65,11 +63,10 @@ angular.module('starter.controllers', [])
           //title: total,
           //titleTextStyle: {fontSize: 20},
           //pieHole: 0.4, for donut chart
-          width: '100%',
-          height: '100%',
+          height: 400,
           is3D: true,
           legend: {position: 'bottom'},
-          chartArea: {left: "3%", top: "3%", height: "94%", width: "94%"},
+          chartArea: {height: "90%"},
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('chart'));
@@ -77,33 +74,8 @@ angular.module('starter.controllers', [])
       }
   }
 
-  $ionicModal.fromTemplateUrl('templates/modal-asset.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modalAsset = modal;
-  });
-
-  $scope.addAsset = function() {
-    assetData.add($scope.modalData);
-    assetData.save($scope.myAsset);
-    $scope.modalAsset.hide();
-    resetModal();
-    calculate();
-  }
-
-  $scope.openModalAsset = function() {
-    $scope.modalStatus = 'add';
-    resetModal();
-    $scope.modalAsset.show();
-  }
-
-  $scope.closeModalAsset = function() {
-    $scope.modalAsset.hide();
-  }
-
   $scope.years = ys;
   $scope.months = ms;
-
 })
 
 
@@ -124,25 +96,41 @@ angular.module('starter.controllers', [])
     $scope.modalAsset = modal;
   });
 
+  $scope.openModalAssetEdit = function(asset) {
+    $scope.modalStatus = 'update';
+    $scope.modalData = assetData.get(asset);
+    $scope.modalAsset.show();
+  }
+
   $scope.updateAsset = function() {
     assetData.set($scope.modalData);
     assetData.save($scope.myAsset);
     $scope.modalAsset.hide();
   }
 
-  $scope.openModalAsset = function(asset) {
-    $scope.modalStatus = 'update';
-    $scope.modalData = assetData.get(asset);
+  $scope.closeModalAsset = function() {
+    $scope.modalAsset.hide();
+  }
+
+  $scope.openModalAssetNew = function() {
+    $scope.modalStatus = 'add';
+    $scope.modalData = {};
+    $scope.modalData.type = 'Bank Saving';
+    $scope.modalData.bank = 'OCBC';
+    $scope.modalData.currency = 'SGD';
+    $scope.modalData.year = y.toString();
+    $scope.modalData.month = (m+1).toString();
     $scope.modalAsset.show();
   }
 
-  $scope.closeModalAsset = function() {
+  $scope.addAsset = function() {
+    assetData.add($scope.modalData);
+    assetData.save($scope.myAsset);
     $scope.modalAsset.hide();
   }
 
   $scope.years = ys;
   $scope.months = ms;
-
 })
 
 

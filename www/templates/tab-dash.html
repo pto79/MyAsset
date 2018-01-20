@@ -1,9 +1,10 @@
-<ion-view view-title="My">
+<ion-view view-title="My Asset">
   <ion-nav-buttons side="left" ng-show="false">
     <button class="button button-icon button-clear ion-earth" ng-click="translate()"></button>
   </ion-nav-buttons>  
   <ion-nav-buttons side="right" ng-show="false">
-    <button class="button button-icon button-clear ion-plus-circled" ng-click="openModalAsset()"></button>
+    <button class="button button-icon button-clear fa fa-bar-chart" ng-show="chartStatus=='pie'" ng-click=""></button>
+    <button class="button button-icon button-clear fa fa-pie-chart" ng-show="chartStatus=='bar'" ng-click=""></button>
   </ion-nav-buttons>
   <ion-content class="padding">
 

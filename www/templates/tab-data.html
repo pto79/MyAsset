@@ -1,7 +1,10 @@
-<ion-view view-title="Data">
+<ion-view view-title="Asset Data">
+  <ion-nav-buttons side="right" ng-show="false">
+    <button class="button button-icon button-clear ion-plus-circled" ng-click="openModalAssetNew()"></button>
+  </ion-nav-buttons>
   <ion-content>
     <ion-list>
-      <ion-item class="item-remove-animate item-icon-left item-icon-right" ng-repeat="asset in myAsset" type="item-text-wrap" ng-click="openModalAsset(asset)">
+      <ion-item class="item-remove-animate item-icon-left item-icon-right" ng-repeat="asset in myAsset" type="item-text-wrap" ng-click="openModalAssetEdit(asset)">
 
         <div ng-show="asset.type == 'Bank Saving'">
           <i class="icon fa fa-bank"></i>
@@ -24,7 +27,7 @@
           <ion-option-button class="button-assertive" ng-click="remove(asset)">
             <i class="icon ion-android-remove-circle"></i>
           </ion-option-button>
-          <ion-option-button class="button-positive" ng-click="openModalAsset(asset)">
+          <ion-option-button class="button-positive" ng-click="openModalAssetEdit(asset)">
             <i class="icon ion-edit"></i>
           </ion-option-button>
         
