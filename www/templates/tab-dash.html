@@ -7,7 +7,7 @@
     <button class="button button-icon button-clear fa fa-pie-chart" ng-show="chartStatus=='line'" ng-click="switchChart()"></button>
   </ion-nav-buttons>
   <ion-content class="padding">
-  	<div ng-show="chartStatus=='pie'">
+  	<div ng-show="chartStatus=='pie'" ng-swipe-left="doSwipeLeft()" ng-swipe-right="doSwipeRight()">
 
       <div class="row">
       	<div class="col">

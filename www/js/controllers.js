@@ -6,7 +6,7 @@ var ms = [];
 for (i = y; i >= y - 100; i--) ys.push(i.toString());
 for (i = 1; i <= 12; i++) ms.push(i.toString());
 
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ngTouch'])
 
 .controller('DashCtrl', function($scope, $ionicModal, $window, assetData) {
   $scope.currentDate = {};
@@ -86,6 +86,24 @@ angular.module('starter.controllers', [])
       $scope.chartStatus = 'line';
     else
       $scope.chartStatus = 'pie';
+  }
+
+  $scope.doSwipeLeft = function() {
+    $scope.currentDate.month += 1; 
+    if($scope.currentDate.month > 12) {
+      $scope.currentDate.month = 1;
+      $scope.currentDate.year += 1;
+    }
+    calculate();
+  }
+
+  $scope.doSwipeRight = function() {
+    $scope.currentDate.month -= 1; 
+    if($scope.currentDate.month < 1) {
+      $scope.currentDate.month = 12;
+      $scope.currentDate.year -= 1;
+    }
+    calculate();
   }
 })
 
