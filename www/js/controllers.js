@@ -6,7 +6,6 @@ var ms = [];
 for (i = y; i >= y - 100; i--) ys.push(i.toString());
 for (i = 1; i <= 12; i++) ms.push(i.toString());
 
-
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, $ionicModal, $window, assetData) {
@@ -31,23 +30,25 @@ angular.module('starter.controllers', [])
     $scope.chartArray.push($scope.chartData);
 
     angular.forEach($scope.myAsset, function(value, key) {
-      if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year)
+      $scope.chartData = [];
+      if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
         if(value.type == 'Bank Saving' || value.type == 'Cash')
           $scope.total += Number(value.amount);
         //if(value.type == 'Stock') todo
-    });
-
-    angular.forEach($scope.myAsset, function(value, key) {
-      $scope.chartData = [];
-      if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
-        if(value.type == 'Bank Saving')
-          $scope.chartData.push(value.bank);
-        if(value.type == 'Cash')
+        var existing = false;
+        angular.forEach($scope.chartArray, function(value2, key) {
+          if(value2[0] == value.type) {
+            value2[1] += value.amount;
+            existing = true;
+          }
+        })
+        if(!existing) {
           $scope.chartData.push(value.type);
+          $scope.chartData.push(value.amount);
+          $scope.chartArray.push($scope.chartData);
+        }
         //if(value.type == 'Stock')
         //if(value.type == 'Other')
-        $scope.chartData.push(value.amount);
-        $scope.chartArray.push($scope.chartData);
       }
     });
     console.log($scope.chartArray);
@@ -58,7 +59,6 @@ angular.module('starter.controllers', [])
 
       function drawChart() {
         var data = google.visualization.arrayToDataTable($scope.chartArray);
-
         var options = {
           //title: total,
           //titleTextStyle: {fontSize: 20},
@@ -68,14 +68,25 @@ angular.module('starter.controllers', [])
           legend: {position: 'bottom'},
           chartArea: {height: "90%"},
         };
-
         var chart = new google.visualization.PieChart(document.getElementById('chart'));
         chart.draw(data, options);
+
+        google.visualization.events.addListener(chart, 'select', selectHandler);
+        function selectHandler(e) {
+          console.log('A row was selected');
+        }
       }
   }
 
   $scope.years = ys;
   $scope.months = ms;
+
+  $scope.switchChart = function() {
+    if($scope.chartStatus == 'pie')
+      $scope.chartStatus = 'line';
+    else
+      $scope.chartStatus = 'pie';
+  }
 })
 
 
@@ -124,6 +135,8 @@ angular.module('starter.controllers', [])
   }
 
   $scope.addAsset = function() {
+    if($scope.modalData.account == undefined)
+      $scope.modalData.account = 'unnamed';
     assetData.add($scope.modalData);
     assetData.save($scope.myAsset);
     $scope.modalAsset.hide();
