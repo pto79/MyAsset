@@ -51,11 +51,10 @@ angular.module('starter.controllers', ['ngTouch'])
         //if(value.type == 'Other')
       }
     });
-    console.log($scope.chartArray);
+    //console.log($scope.chartArray);
 
       google.charts.load("current", {packages:["corechart"]});
-      if($scope.chartArray.length > 1)
-        google.charts.setOnLoadCallback(drawChart);
+      google.charts.setOnLoadCallback(drawChart);
 
       function drawChart() {
         var data = google.visualization.arrayToDataTable($scope.chartArray);
@@ -89,19 +88,19 @@ angular.module('starter.controllers', ['ngTouch'])
   }
 
   $scope.doSwipeLeft = function() {
-    $scope.currentDate.month += 1; 
-    if($scope.currentDate.month > 12) {
-      $scope.currentDate.month = 1;
-      $scope.currentDate.year += 1;
+    $scope.currentDate.month = (parseInt($scope.currentDate.month) + 1).toString();
+    if(parseInt($scope.currentDate.month) > 12) {
+      $scope.currentDate.month = '1';
+      $scope.currentDate.year = (parseInt($scope.currentDate.year) + 1).toString();
     }
     calculate();
   }
 
   $scope.doSwipeRight = function() {
-    $scope.currentDate.month -= 1; 
-    if($scope.currentDate.month < 1) {
-      $scope.currentDate.month = 12;
-      $scope.currentDate.year -= 1;
+    $scope.currentDate.month = (parseInt($scope.currentDate.month) - 1).toString(); 
+    if(parseInt($scope.currentDate.month) < 1) {
+      $scope.currentDate.month = '12';
+      $scope.currentDate.year = (parseInt($scope.currentDate.year) - 1).toString();
     }
     calculate();
   }
