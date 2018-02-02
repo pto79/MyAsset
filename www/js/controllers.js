@@ -59,13 +59,13 @@ angular.module('starter.controllers', ['ngTouch'])
       function drawChart() {
         var data = google.visualization.arrayToDataTable($scope.chartArray);
         var options = {
-          //title: total,
+          //title: $scope.total,
           //titleTextStyle: {fontSize: 20},
           //pieHole: 0.4, for donut chart
-          height: 400,
+          backgroundColor: 'gray',
           is3D: true,
           legend: {position: 'bottom'},
-          chartArea: {height: "90%"},
+          chartArea: {width: '90%', height: '90%'}
         };
         var chart = new google.visualization.PieChart(document.getElementById('chart'));
         chart.draw(data, options);
