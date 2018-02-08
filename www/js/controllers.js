@@ -164,7 +164,8 @@ angular.module('starter.controllers', ['ngTouch'])
 })
 
 
-.controller('AccountCtrl', function($scope, $ionicPopup) {
+.controller('AccountCtrl', function($scope, $ionicPopup, assetData) {
+  $scope.myAsset = assetData.all();
 
   $scope.settings = {
     onlineMode: false
@@ -183,6 +184,25 @@ angular.module('starter.controllers', ['ngTouch'])
      } else {
      }
    });
+  }
+
+  $scope.exportData = function() {
+    var copyText = document.getElementById("myClipboard");
+    copyText.type = "text";
+    copyText.select();
+    document.execCommand("Copy");
+    alert("Asset data has copied to clipboard");
+    copyText.type = "hidden";
+  }
+
+  $scope.importData = function() {
+    var copyText = document.getElementById("myClipboard");
+    copyText.type = "text";
+    copyText.focus();
+    document.execCommand("paste");
+    alert("Asset data has replaced by clipboard");
+    console.log(copyText.value);
+    copyText.type = "hidden";
   }
 
 });
