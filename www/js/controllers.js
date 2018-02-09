@@ -111,6 +111,9 @@ angular.module('starter.controllers', ['ngTouch'])
 
   $scope.$on('$ionicView.beforeEnter', function(e) {
     $scope.myAsset = assetData.all();
+    angular.forEach($scope.myAsset, function(value, key) {
+      value.date = value.year + value.month;
+    });
     console.log($scope.myAsset);
   });
 
@@ -132,6 +135,7 @@ angular.module('starter.controllers', ['ngTouch'])
   }
 
   $scope.updateAsset = function() {
+    $scope.modalData.month = ("0" + ($scope.modalData.month)).slice(-2);
     assetData.set($scope.modalData);
     assetData.save();
     $scope.modalAsset.hide();
@@ -155,6 +159,9 @@ angular.module('starter.controllers', ['ngTouch'])
   $scope.addAsset = function() {
     if($scope.modalData.account == undefined)
       $scope.modalData.account = 'unnamed';
+    if($scope.modalData.type != "Bank Saving")
+      delete $scope.modalData.bank;
+    $scope.modalData.month = ("0" + ($scope.modalData.month)).slice(-2);
     assetData.add($scope.modalData);
     assetData.save();
     $scope.modalAsset.hide();
@@ -162,6 +169,21 @@ angular.module('starter.controllers', ['ngTouch'])
 
   $scope.years = ys;
   $scope.months = ms;
+
+  $scope.reverse = true;
+  $scope.sortData = function(sortOrder) {
+    $scope.reverse = (sortOrder === 'desc') ? true : false;
+  };
+
+  $scope.filterType = {};
+  $scope.filterType.bank = true;
+  $scope.filterType.cash = true;
+  $scope.filterType.stock = true;
+  $scope.filterType.other = true;
+  $scope.filterData = function (asset) {
+    return (asset.type === "Bank Saving" && $scope.filterType.bank || asset.type === "Cash" && $scope.filterType.cash || asset.type === "Stock" && $scope.filterType.stock || asset.type === "Other" && $scope.filterType.other);
+  }
+
 })
 
 

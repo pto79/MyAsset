@@ -59,22 +59,22 @@
 
         <label class="item item-input" ng-show="modalData.type == 'Bank Saving'">
           <span class="input-label">Account</span>
-          <input ng-model="modalData.account" type="text">
+          <input ng-model="modalData.account" type="text" style="text-align: right;">
         </label>
 
         <label class="item item-input" ng-show="modalData.type == 'Stock'">
           <span class="input-label">Symbol</span>
-          <input ng-model="modalData.symbol" type="text">
+          <input ng-model="modalData.symbol" type="text" style="text-align: right;">
         </label>
 
         <label class="item item-input" ng-show="modalData.type == 'Other'">
           <span class="input-label">Remark</span>
-          <input ng-model="modalData.remark" type="text">
+          <input ng-model="modalData.remark" type="text" style="text-align: right;">
         </label>
 
         <label class="item item-input" ng-show="modalData.type != undefined">
           <span class="input-label">Amount</span>
-          <input ng-model="modalData.amount" type="number">
+          <input ng-model="modalData.amount" type="number" style="text-align: right;">
         </label>
 
 	  <label class="item item-input item-select">

@@ -4,32 +4,74 @@
   </ion-nav-buttons>
   <ion-content>
     <ion-list>
-      <ion-item class="item-remove-animate item-icon-left item-icon-right" ng-repeat="asset in myAsset" type="item-text-wrap" ng-click="openModalAssetEdit(asset)">
+      <div class="row" style="text-align: center;">
+      <div class="col"><input type = "checkbox" ng-model="filterType.bank" />Bank Saving</div>
+      <div class="col"><input type = "checkbox" ng-model="filterType.cash" />Cash</div>
+      <div class="col"><input type = "checkbox" ng-model="filterType.stock" />Stock</div>
+      <div class="col"><input type = "checkbox" ng-model="filterType.other" />Other</div>
+      <div class="col">
+        Date 
+        <button class="icon fa fa-sort-desc" ng-click="sortData('asc')" ng-show="reverse"></button>
+        <button class="icon fa fa-sort-asc" ng-click="sortData('desc')" ng-show="!reverse"></button>
+      </div>
+      </div>
+      <ion-item class="item-remove-animate item-icon-left item-icon-right" ng-repeat="asset in myAsset | orderBy: 'date' : reverse | filter: filterData track by $index" type="item-text-wrap" ng-click="openModalAssetEdit(asset)">
 
         <div ng-show="asset.type == 'Bank Saving'">
           <i class="icon fa fa-bank"></i>
-          <h2>{{asset.amount}}({{asset.currency}}) {{asset.month}}/{{asset.year}}</h2>
-          <i class="icon ion-chevron-left icon-accessory"></i>
+          <div class="row" style="text-align: center;">
+            <div class="col">
+              {{asset.amount}} ({{asset.currency}})
+            </div>
+            <div class="col">
+              {{asset.month}}/{{asset.year}}
+            </div>
+          </div>
         </div>
 
         <div ng-show="asset.type == 'Cash'">
           <i class="icon fa fa-money"></i>
-          <h2>{{asset.amount}}({{asset.currency}}) {{asset.month}}/{{asset.year}}</h2>
-          <i class="icon ion-chevron-left icon-accessory"></i>
+          <div class="row" style="text-align: center;">
+            <div class="col">
+              {{asset.amount}} ({{asset.currency}})
+            </div>
+            <div class="col">
+              {{asset.month}}/{{asset.year}}
+            </div>
+          </div>
         </div>
 
         <div ng-show="asset.type == 'Stock'">
           <i class="icon fa fa-line-chart"></i>
-          <h2>{{asset.symbol}} {{asset.amount}}({{asset.currency}}) {{asset.month}}/{{asset.year}}</h2>
-          <i class="icon ion-chevron-left icon-accessory"></i>
+          <div class="row" style="text-align: center;">
+            <div class="col">
+              {{asset.symbol}} ({{asset.amount}})
+            </div>
+            <div class="col">
+              {{asset.month}}/{{asset.year}}
+            </div>
+          </div>
         </div>
 
-          <ion-option-button class="button-assertive" ng-click="remove(asset)">
-            <i class="icon ion-android-remove-circle"></i>
-          </ion-option-button>
-          <ion-option-button class="button-positive" ng-click="openModalAssetEdit(asset)">
-            <i class="icon ion-edit"></i>
-          </ion-option-button>
+        <div ng-show="asset.type == 'Other'">
+          <i class="icon fa fa-question-circle"></i>
+          <div class="row" style="text-align: center;">
+            <div class="col">
+              {{asset.amount}} ({{asset.currency}})
+            </div>
+            <div class="col">
+               {{asset.month}}/{{asset.year}}
+            </div>
+          </div>
+        </div>
+
+        <i class="icon ion-chevron-left icon-accessory"></i>
+        <ion-option-button class="button-assertive" ng-click="remove(asset)">
+          <i class="icon ion-android-remove-circle"></i>
+        </ion-option-button>
+        <ion-option-button class="button-positive" ng-click="openModalAssetEdit(asset)">
+          <i class="icon ion-edit"></i>
+        </ion-option-button>
         
       </ion-item>
     </ion-list>
