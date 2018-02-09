@@ -2,19 +2,24 @@ angular.module('starter.services', [])
 
 .factory('assetData', function() {
   // Might use a resource here that returns a JSON array
-  var myAsset;
+  var myAsset = localStorage.getItem('assets');
+  if(myAsset == "undefined" || myAsset == null  || myAsset == "")
+    myAsset = [];
+  myAsset = JSON.parse(myAsset);
 
   return {
     all: function() {
-      myAsset = localStorage.getItem('assets');
-      if(myAsset == "undefined" || myAsset == null)
-        myAsset = [];
-      else
-        myAsset = JSON.parse(myAsset);
       return myAsset;
     },
-    save: function(assets) {
-      localStorage.setItem('assets', JSON.stringify(assets));
+    save: function() {
+      localStorage.setItem('assets', JSON.stringify(myAsset));
+    },
+    export: function() {
+      return localStorage.getItem('assets');
+    },
+    import: function(data) {
+      myAsset = JSON.parse(data);
+      localStorage.setItem('assets', data);
     },
     add: function(asset) {
       myAsset.push(asset);

@@ -14,7 +14,7 @@ angular.module('starter.controllers', ['ngTouch'])
   $scope.currentDate.year = y.toString();
   $scope.chartStatus = 'pie';
 
-  $scope.$on('$ionicView.enter', function(e) {
+  $scope.$on('$ionicView.beforeEnter', function(e) {
     $scope.myAsset = assetData.all();
     calculate();
   })
@@ -68,7 +68,7 @@ angular.module('starter.controllers', ['ngTouch'])
           chartArea: {width: '90%', height: '90%'}
         };
         var chart = new google.visualization.PieChart(document.getElementById('chart'));
-        chart.draw(data, options);
+        //chart.draw(data, options);
 
         google.visualization.events.addListener(chart, 'select', selectHandler);
         function selectHandler(e) {
@@ -109,13 +109,14 @@ angular.module('starter.controllers', ['ngTouch'])
 
 .controller('DataCtrl', function($scope, $ionicModal, assetData) {
 
-  $scope.$on('$ionicView.enter', function(e) {
+  $scope.$on('$ionicView.beforeEnter', function(e) {
     $scope.myAsset = assetData.all();
+    console.log($scope.myAsset);
   });
 
   $scope.remove = function(asset) {
     assetData.remove(asset);
-    assetData.save($scope.myAsset);
+    assetData.save();
   };
 
   $ionicModal.fromTemplateUrl('templates/modal-asset.html', {
@@ -132,7 +133,7 @@ angular.module('starter.controllers', ['ngTouch'])
 
   $scope.updateAsset = function() {
     assetData.set($scope.modalData);
-    assetData.save($scope.myAsset);
+    assetData.save();
     $scope.modalAsset.hide();
   }
 
@@ -155,7 +156,7 @@ angular.module('starter.controllers', ['ngTouch'])
     if($scope.modalData.account == undefined)
       $scope.modalData.account = 'unnamed';
     assetData.add($scope.modalData);
-    assetData.save($scope.myAsset);
+    assetData.save();
     $scope.modalAsset.hide();
   }
 
@@ -164,31 +165,34 @@ angular.module('starter.controllers', ['ngTouch'])
 })
 
 
-.controller('AccountCtrl', function($scope, $ionicPopup, assetData) {
-  $scope.myAsset = assetData.all();
+.controller('AccountCtrl', function($scope, $ionicPopup, assetData, $ionicModal) {
 
   $scope.settings = {
     onlineMode: false
   };
 
+  $ionicModal.fromTemplateUrl('templates/modal-import.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modalImport = modal;
+  });
+
   $scope.clearData = function() {
-
-   var confirmPopup = $ionicPopup.confirm({
-     title: 'Warning!',
-     template: 'Are you sure you want to delete ALL asset data permanently?'
-   });
-
-   confirmPopup.then(function(res) {
-     if(res) {
-       localStorage.clear();
-     } else {
-     }
-   });
+    $ionicPopup.confirm({
+      title: 'Warning!',
+      template: 'Are you sure to delete ALL asset data permanently?'
+    }).then(function(res) {
+      if(res)
+        localStorage.clear();
+      else
+        console.log("never mind");
+    });
   }
 
   $scope.exportData = function() {
     var copyText = document.getElementById("myClipboard");
     copyText.type = "text";
+    copyText.value = assetData.export();
     copyText.select();
     document.execCommand("Copy");
     alert("Asset data has copied to clipboard");
@@ -196,13 +200,26 @@ angular.module('starter.controllers', ['ngTouch'])
   }
 
   $scope.importData = function() {
-    var copyText = document.getElementById("myClipboard");
-    copyText.type = "text";
-    copyText.focus();
-    document.execCommand("paste");
-    alert("Asset data has replaced by clipboard");
-    console.log(copyText.value);
-    copyText.type = "hidden";
+    $scope.importData.data = "";
+    $scope.modalImport.show();
+  }
+
+  $scope.closeModalImport = function() {
+    $scope.modalImport.hide();
+  }
+
+  $scope.saveData = function(data) {
+    $ionicPopup.confirm({
+      title: 'Warning!',
+      template: 'Are you sure to overwrite the current asset data?'
+    }).then(function(res){
+      if(res) {
+        assetData.import(data);
+        $scope.modalImport.hide();
+      }
+      else
+        console.log("never mind");
+    });
   }
 
 });

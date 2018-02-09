@@ -1,0 +1,18 @@
+  <ion-modal-view>
+    <ion-header-bar class="bar bar-header bar-positive">
+      <h1 class="title">Import data from clipboard</h1>
+      <button class="button button-clear button-primary" ng-click="closeModalImport()">Cancel</button>
+    </ion-header-bar>
+    <ion-content class="padding">
+
+      <div class="padding">
+        <div class="list">
+          <label class="item item-input">
+            <textarea placeholder="Paste asset data here" ng-model="importData.data"></textarea>
+          </label>
+        </div>
+		<button class="button button-full button-positive" ng-click="saveData(importData.data)">Save</button>
+      </div>
+
+    </ion-content>
+  </ion-modal-view>
