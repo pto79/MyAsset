@@ -27,6 +27,17 @@
 	    <p style="font-size: smaller; font-style: italic">Deleted data cannot be recovered</p>
 	    <i class="icon ion-trash-a" style="color: red"></i>
 	  </a>
+
+		<label class = "item item-input item-select">
+		   <div class = "input-label">
+		      Base Currency
+		   </div>
+		   <select ng-model="settings.base" ng-change="changeBase()">
+		      <option selected>SGD</option>
+		      <option>CNY</option>
+		      <option>USD</option>
+		   </select>
+		</label>
 	  <input type="hidden" value="" id="myClipboard">
     </ion-list>
   </ion-content>

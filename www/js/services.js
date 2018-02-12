@@ -34,4 +34,36 @@ angular.module('starter.services', [])
       myAsset[myAsset.indexOf(asset)] = asset;
     }
   };
-});
+})
+
+.factory('exchangeService', function($http, $rootScope) {
+
+  function getRate() {
+    $http({
+      method: "GET",
+      url: "https://api.fixer.io/latest?base=" + localStorage.getItem('base')
+    }).then(function(res) {
+      console.log(res);
+      $rootScope.exchangeRate = res.data;
+    }, function(res) {
+      console.log(res);
+    });
+  }
+
+  return {
+    get: function() {
+      getRate();
+      return $rootScope.exchangeRate;
+    },
+    getBase: function() {
+      return localStorage.getItem('base');
+    },
+    setBase: function(base) {
+      localStorage.setItem('base', base);
+      getRate();
+    }
+  };
+
+})
+
+;

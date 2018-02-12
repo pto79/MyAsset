@@ -8,7 +8,7 @@ for (i = 1; i <= 12; i++) ms.push(i.toString());
 
 angular.module('starter.controllers', ['ngTouch'])
 
-.controller('DashCtrl', function($scope, $ionicModal, $window, assetData) {
+.controller('DashCtrl', function($scope, $ionicModal, $window, assetData, $rootScope) {
   $scope.currentDate = {};
   $scope.currentDate.month = (m+1).toString();
   $scope.currentDate.year = y.toString();
@@ -193,10 +193,11 @@ angular.module('starter.controllers', ['ngTouch'])
 })
 
 
-.controller('AccountCtrl', function($scope, $ionicPopup, assetData, $ionicModal) {
+.controller('AccountCtrl', function($scope, $ionicPopup, assetData, $ionicModal, exchangeService) {
 
   $scope.settings = {
-    onlineMode: false
+    onlineMode: false,
+    base: exchangeService.getBase()
   };
 
   $ionicModal.fromTemplateUrl('templates/modal-import.html', {
@@ -248,6 +249,11 @@ angular.module('starter.controllers', ['ngTouch'])
       else
         console.log("never mind");
     });
+  }
+
+  $scope.changeBase = function() {
+    console.log($scope.settings.base);
+    exchangeService.setBase($scope.settings.base);
   }
 
 });
