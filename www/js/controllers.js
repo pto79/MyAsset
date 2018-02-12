@@ -4,13 +4,13 @@ var m = d.getMonth();
 var ys = [];
 var ms = [];
 for (i = y; i >= y - 100; i--) ys.push(i.toString());
-for (i = 1; i <= 12; i++) ms.push(i.toString());
+for (i = 1; i <= 12; i++) ms.push(("0" + i).slice(-2));
 
 angular.module('starter.controllers', ['ngTouch'])
 
-.controller('DashCtrl', function($scope, $ionicModal, $window, assetData, $rootScope) {
+.controller('DashCtrl', function($scope, $ionicModal, $window, assetData, $rootScope, exchangeService) {
   $scope.currentDate = {};
-  $scope.currentDate.month = (m+1).toString();
+  $scope.currentDate.month = ("0" + (m+1)).slice(-2);
   $scope.currentDate.year = y.toString();
   $scope.chartStatus = 'pie';
 
@@ -32,8 +32,18 @@ angular.module('starter.controllers', ['ngTouch'])
     angular.forEach($scope.myAsset, function(value, key) {
       $scope.chartData = [];
       if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
-        if(value.type == 'Bank Saving' || value.type == 'Cash')
-          $scope.total += Number(value.amount);
+        if(value.type == 'Bank Saving' || value.type == 'Cash') {
+          if(value.currency != exchangeService.getBase()) {
+            console.log(value);
+            angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+              if(value.currency == currency)
+                $scope.total += value.amount / rate;
+            })
+          }
+            //$scope.total += Number(value.amount);
+          else
+            $scope.total += Number(value.amount);
+        }
         //if(value.type == 'Stock') todo
         var existing = false;
         angular.forEach($scope.chartArray, function(value2, key) {
@@ -75,6 +85,8 @@ angular.module('starter.controllers', ['ngTouch'])
           console.log('A row was selected');
         }
       }
+
+      $scope.total = exchangeService.getBase() + ": " + $scope.total.toFixed(2);
   }
 
   $scope.years = ys;
@@ -90,7 +102,7 @@ angular.module('starter.controllers', ['ngTouch'])
   $scope.doSwipeLeft = function() {
     $scope.currentDate.month = (parseInt($scope.currentDate.month) + 1).toString();
     if(parseInt($scope.currentDate.month) > 12) {
-      $scope.currentDate.month = '1';
+      $scope.currentDate.month = '01';
       $scope.currentDate.year = (parseInt($scope.currentDate.year) + 1).toString();
     }
     calculate();
@@ -152,7 +164,7 @@ angular.module('starter.controllers', ['ngTouch'])
     $scope.modalData.bank = 'OCBC';
     $scope.modalData.currency = 'SGD';
     $scope.modalData.year = y.toString();
-    $scope.modalData.month = (m+1).toString();
+    $scope.modalData.month = ("0" + (m+1)).slice(-2);
     $scope.modalAsset.show();
   }
 
