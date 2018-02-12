@@ -107,7 +107,7 @@ angular.module('starter.controllers', ['ngTouch'])
 })
 
 
-.controller('DataCtrl', function($scope, $ionicModal, assetData) {
+.controller('DataCtrl', function($scope, $ionicModal, assetData, $ionicPopover) {
 
   $scope.$on('$ionicView.beforeEnter', function(e) {
     $scope.myAsset = assetData.all();
@@ -183,6 +183,12 @@ angular.module('starter.controllers', ['ngTouch'])
   $scope.filterData = function (asset) {
     return (asset.type === "Bank Saving" && $scope.filterType.bank || asset.type === "Cash" && $scope.filterType.cash || asset.type === "Stock" && $scope.filterType.stock || asset.type === "Other" && $scope.filterType.other);
   }
+
+   $ionicPopover.fromTemplateUrl('templates/popover-filter.html', {
+      scope: $scope
+   }).then(function(popover) {
+      $scope.popoverFilter = popover;
+   });
 
 })
 

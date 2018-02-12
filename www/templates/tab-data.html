@@ -4,16 +4,14 @@
   </ion-nav-buttons>
   <ion-content>
     <ion-list>
-      <div class="row" style="text-align: center;">
-      <div class="col"><input type = "checkbox" ng-model="filterType.bank" />Bank Saving</div>
-      <div class="col"><input type = "checkbox" ng-model="filterType.cash" />Cash</div>
-      <div class="col"><input type = "checkbox" ng-model="filterType.stock" />Stock</div>
-      <div class="col"><input type = "checkbox" ng-model="filterType.other" />Other</div>
-      <div class="col">
-        Date 
-        <button class="icon fa fa-sort-desc" ng-click="sortData('asc')" ng-show="reverse"></button>
-        <button class="icon fa fa-sort-asc" ng-click="sortData('desc')" ng-show="!reverse"></button>
-      </div>
+      <div class="row">
+        <div class="col">
+          <button class="icon fa fa-filter" ng-click="popoverFilter.show($event)"> filter</button>
+        </div>
+        <div class="col" style="text-align: right;">
+          <button class="icon fa fa-sort-desc" ng-click="sortData('asc')" ng-show="reverse"> Date</button>
+          <button class="icon fa fa-sort-asc" ng-click="sortData('desc')" ng-show="!reverse"> Date</button>
+        </div>
       </div>
       <ion-item class="item-remove-animate item-icon-left item-icon-right" ng-repeat="asset in myAsset | orderBy: 'date' : reverse | filter: filterData track by $index" type="item-text-wrap" ng-click="openModalAssetEdit(asset)">
 
