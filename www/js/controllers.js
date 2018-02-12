@@ -40,28 +40,45 @@ angular.module('starter.controllers', ['ngTouch'])
                 $scope.total += value.amount / rate;
             })
           }
-            //$scope.total += Number(value.amount);
           else
             $scope.total += Number(value.amount);
         }
         //if(value.type == 'Stock') todo
         var existing = false;
-        angular.forEach($scope.chartArray, function(value2, key) {
-          if(value2[0] == value.type) {
-            value2[1] += value.amount;
+        angular.forEach($scope.chartArray, function(arrayData, key) {
+          if(arrayData[0] == value.type) {
+            if(value.currency != exchangeService.getBase())
+              angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+                if(value.currency == currency)
+                  arrayData[1] += value.amount / rate;
+              })
+            else
+              arrayData[1] += value.amount;
             existing = true;
           }
         })
         if(!existing) {
           $scope.chartData.push(value.type);
-          $scope.chartData.push(value.amount);
+          if(value.currency != exchangeService.getBase())
+            angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+              if(value.currency == currency)
+                $scope.chartData.push(value.amount / rate);
+            })
+          else
+            $scope.chartData.push(value.amount);
           $scope.chartArray.push($scope.chartData);
         }
         //if(value.type == 'Stock')
         //if(value.type == 'Other')
       }
     });
-    //console.log($scope.chartArray);
+    
+    angular.forEach($scope.chartArray, function(arrayData, key) {
+      if(arrayData[1] != "Amount")
+        arrayData[1] = Number(Number(arrayData[1]).toFixed(2));
+    });
+    
+    console.log($scope.chartArray);
 
       google.charts.load("current", {packages:["corechart"]});
       google.charts.setOnLoadCallback(drawChart);
@@ -78,7 +95,7 @@ angular.module('starter.controllers', ['ngTouch'])
           chartArea: {width: '90%', height: '90%'}
         };
         var chart = new google.visualization.PieChart(document.getElementById('chart'));
-        //chart.draw(data, options);
+        chart.draw(data, options);
 
         google.visualization.events.addListener(chart, 'select', selectHandler);
         function selectHandler(e) {
@@ -100,7 +117,7 @@ angular.module('starter.controllers', ['ngTouch'])
   }
 
   $scope.doSwipeLeft = function() {
-    $scope.currentDate.month = (parseInt($scope.currentDate.month) + 1).toString();
+    $scope.currentDate.month = ("0" + (parseInt($scope.currentDate.month) + 1)).slice(-2);
     if(parseInt($scope.currentDate.month) > 12) {
       $scope.currentDate.month = '01';
       $scope.currentDate.year = (parseInt($scope.currentDate.year) + 1).toString();
@@ -109,7 +126,7 @@ angular.module('starter.controllers', ['ngTouch'])
   }
 
   $scope.doSwipeRight = function() {
-    $scope.currentDate.month = (parseInt($scope.currentDate.month) - 1).toString(); 
+    $scope.currentDate.month = ("0" + (parseInt($scope.currentDate.month) - 1)).slice(-2); 
     if(parseInt($scope.currentDate.month) < 1) {
       $scope.currentDate.month = '12';
       $scope.currentDate.year = (parseInt($scope.currentDate.year) - 1).toString();
@@ -143,6 +160,7 @@ angular.module('starter.controllers', ['ngTouch'])
   $scope.openModalAssetEdit = function(asset) {
     $scope.modalStatus = 'update';
     $scope.modalData = assetData.get(asset);
+    $scope.modalData.month = ("0" + ($scope.modalData.month)).slice(-2);
     $scope.modalAsset.show();
   }
 
