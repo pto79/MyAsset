@@ -8,7 +8,7 @@ for (i = 1; i <= 12; i++) ms.push(("0" + i).slice(-2));
 
 angular.module('starter.controllers', ['ngTouch'])
 
-.controller('DashCtrl', function($scope, $ionicModal, $window, assetData, $rootScope, exchangeService, stockService) {
+.controller('DashCtrl', function($scope, $ionicModal, $window, assetData, $rootScope, exchangeService) {
   $scope.currentDate = {};
   $scope.currentDate.month = ("0" + (m+1)).slice(-2);
   $scope.currentDate.year = y.toString();
@@ -25,36 +25,28 @@ angular.module('starter.controllers', ['ngTouch'])
     $scope.total = 0;
     $scope.chartArray = [];
     $scope.chartData = [];
-    $scope.chartData.push('Bank Name');
+    $scope.chartData.push('Asset Name');
     $scope.chartData.push('Amount');
     $scope.chartArray.push($scope.chartData);
     $scope.base = exchangeService.getBase();
 
     angular.forEach($scope.myAsset, function(value, key) {
+      var temp = 0;
       $scope.chartData = [];
       if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
-        if(value.type == 'Bank Saving' || value.type == 'Cash' || value.type == 'Other') {
-          if(value.currency != $scope.base) {
-            console.log(value);
-            angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-              if(value.currency == currency)
-                $scope.total += value.amount / rate;
-            })
-          }
-          else
-            $scope.total += value.amount;
-        }
-        if(value.type == 'Stock') {
-          stockService.get(value.symbol).then(function(res){
-            if($scope.base != "USD") //assume all stock are from usa market first
-              angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-                if(currency == "USD")
-                  $scope.total += res * value.amount / rate;
-              })
-            else
-              $scope.total += res * value.amount;
+
+        if(value.currency != $scope.base)
+          angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+            if(value.currency == currency)
+              temp = value.amount / rate;
           })
-        }
+        else
+          temp = value.amount;
+
+        if(value.type == 'Stock')
+            temp *= sessionStorage.getItem(value.symbol);
+
+        $scope.total += temp;
         /*
         var existing = false;
         angular.forEach($scope.chartArray, function(arrayData, key) {
@@ -81,8 +73,23 @@ angular.module('starter.controllers', ['ngTouch'])
           $scope.chartArray.push($scope.chartData);
         }
         */
-        $scope.chartData.push(value.type+" ("+value.currency+")");
-        $scope.chartData.push(value.amount);
+        if(value.type == "Stock")
+          $scope.chartData.push(value.type);  //+": "+value.symbol+"("+value.amount+")");
+        else
+          $scope.chartData.push(value.type);  //+": "+value.amount+"("+value.currency+")");
+
+        if(value.currency != $scope.base)
+          angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+            if(value.currency == currency)
+              temp = value.amount / rate;
+          })
+        else
+          temp = value.amount;
+
+        if(value.type == 'Stock') 
+            temp *= sessionStorage.getItem(value.symbol);
+
+        $scope.chartData.push(temp);
         $scope.chartArray.push($scope.chartData);
       }
     });
@@ -104,12 +111,12 @@ angular.module('starter.controllers', ['ngTouch'])
           //titleTextStyle: {fontSize: 20},
           //pieHole: 0.4, for donut chart
           //backgroundColor: 'gray',
-          is3D: true,
-          legend: {position: 'bottom'},
-          chartArea: {width: '90%', height: '90%'}
+          //is3D: true,
+          legend: { position: 'bottom' },
+          chartArea: { width: '90%', height: '90%' }
         };
         var chart = new google.visualization.PieChart(document.getElementById('chart'));
-        //chart.draw(data, options);
+        chart.draw(data, options);
 
         google.visualization.events.addListener(chart, 'select', selectHandler);
         function selectHandler(e) {
@@ -148,7 +155,7 @@ angular.module('starter.controllers', ['ngTouch'])
 })
 
 
-.controller('DataCtrl', function($scope, $ionicModal, assetData, $ionicPopover) {
+.controller('DataCtrl', function($scope, $ionicModal, assetData, $ionicPopover, stockService) {
 
   $scope.$on('$ionicView.beforeEnter', function(e) {
     $scope.myAsset = assetData.all();
@@ -204,9 +211,27 @@ angular.module('starter.controllers', ['ngTouch'])
     if($scope.modalData.type != "Bank Saving")
       delete $scope.modalData.bank;
     $scope.modalData.month = ("0" + ($scope.modalData.month)).slice(-2);
-    assetData.add($scope.modalData);
-    assetData.save();
-    $scope.modalAsset.hide();
+    if($scope.modalData.type == "Stock") {
+      stockService.get($scope.modalData.symbol)
+      .then(function(res){
+        console.log(res);
+        assetData.add($scope.modalData);
+        assetData.save();
+        $scope.modalAsset.hide();
+      })
+      .catch(function(res){
+        console.log(res);
+        if(res == "Unknown symbol"){
+          alert("Unknown stock symbol!");
+        }
+        $scope.modalData.symbol = "";
+      })
+    }
+    else {
+      assetData.add($scope.modalData);
+      assetData.save();
+      $scope.modalAsset.hide();
+    }
   }
 
   $scope.years = ys;
@@ -235,7 +260,7 @@ angular.module('starter.controllers', ['ngTouch'])
 })
 
 
-.controller('AccountCtrl', function($scope, $ionicPopup, assetData, $ionicModal, exchangeService) {
+.controller('AccountCtrl', function($scope, $ionicPopup, assetData, $ionicModal, exchangeService, $rootScope) {
 
   $scope.settings = {
     onlineMode: false,
@@ -296,6 +321,9 @@ angular.module('starter.controllers', ['ngTouch'])
   $scope.changeBase = function() {
     console.log($scope.settings.base);
     exchangeService.setBase($scope.settings.base);
+    exchangeService.get().then(function(res){
+      $rootScope.exchangeRate = res;
+    })
   }
 
 });

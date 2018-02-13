@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
-.run(function($ionicPlatform, exchangeService) {
+.run(function($ionicPlatform, exchangeService, assetData, stockService, $rootScope) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -21,11 +21,19 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       StatusBar.styleDefault();
     }
   });
-  var base = localStorage.getItem('base');
-  if(base == "undefined" || base == null  || base == "")
-    exchangeService.setBase('SGD');
-  else
-    exchangeService.get();
+
+  exchangeService.get().then(function(res){
+    $rootScope.exchangeRate = res;
+  })
+
+  angular.forEach(assetData.all(), function(value, key) {
+    if(value.type == "Stock")
+    {
+      stockService.get(value.symbol).then(function(res){
+        sessionStorage.setItem(value.symbol, res);
+      })
+    }
+  })
 })
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {

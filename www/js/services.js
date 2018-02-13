@@ -37,44 +37,35 @@ angular.module('starter.services', [])
 })
 
 
-.factory('exchangeService', function($http, $rootScope, $q) {
-
-  function getRate() {
-    var deferred = $q.defer();
-    $http({
-      method: "GET",
-      url: "https://api.fixer.io/latest?base=" + localStorage.getItem('base')
-    }).then(function(res) {
-      console.log(res);
-      deferred.resolve(res.data);
-    }, function(res) {
-      console.log(res);
-      deferred.reject(res);
-    });
-    return deferred.promise;
-  }
+.factory('exchangeService', function($http, $q) {
+  var base = localStorage.getItem('base');
+  if(base == "undefined" || base == null  || base == "")
+    exchangeService.setBase('SGD');
 
   return {
     get: function() {
-      getRate().then(function(res){
-        $rootScope.exchangeRate = res;
-        return $rootScope.exchangeRate;
-      })
+      var deferred = $q.defer();
+      $http({
+        method: "GET",
+        url: "https://api.fixer.io/latest?base=" + localStorage.getItem('base')
+      }).then(function(res) {
+        console.log(res);
+        deferred.resolve(res.data);
+      }, function(res) {
+        console.log(res);
+        deferred.reject(res.data);
+      });
+      return deferred.promise;
     },
     getBase: function() {
       return localStorage.getItem('base');
     },
     setBase: function(base) {
       localStorage.setItem('base', base);
-      getRate().then(function(res){
-        $rootScope.exchangeRate = res;
-        return $rootScope.exchangeRate;
-      })
     }
   };
 
 })
-
 
 
 .factory('stockService', function($http, $q) {
@@ -90,7 +81,7 @@ angular.module('starter.services', [])
         deferred.resolve(res.data);
       }, function(res) {
         console.log(res);
-        deferred.reject(res);
+        deferred.reject(res.data);
       });
       return deferred.promise;
     }
