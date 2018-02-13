@@ -36,10 +36,19 @@ angular.module('starter.controllers', ['ngTouch'])
       if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
 
         if(value.currency != $scope.base)
-          angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-            if(value.currency == currency)
-              temp = value.amount / rate;
-          })
+          if($rootScope.exchangeRate == undefined)
+            exchangeService.get().then(function(res){
+              $rootScope.exchangeRate = res;
+              angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+                if(value.currency == currency)
+                  temp = value.amount / rate;
+              })
+            })
+          else
+            angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+              if(value.currency == currency)
+                temp = value.amount / rate;
+            })
         else
           temp = value.amount;
 
@@ -79,10 +88,19 @@ angular.module('starter.controllers', ['ngTouch'])
           $scope.chartData.push(value.type);  //+": "+value.amount+"("+value.currency+")");
 
         if(value.currency != $scope.base)
-          angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-            if(value.currency == currency)
-              temp = value.amount / rate;
-          })
+          if($rootScope.exchangeRate == undefined)
+            exchangeService.get().then(function(res){
+              $rootScope.exchangeRate = res;
+              angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+                if(value.currency == currency)
+                  temp = value.amount / rate;
+              })
+            })
+          else
+            angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+              if(value.currency == currency)
+                temp = value.amount / rate;
+            })
         else
           temp = value.amount;
 
@@ -217,6 +235,7 @@ angular.module('starter.controllers', ['ngTouch'])
       stockService.get($scope.modalData.symbol)
       .then(function(res){
         console.log(res);
+        sessionStorage.setItem($scope.modalData.symbol, res);
         assetData.add($scope.modalData);
         assetData.save();
         $scope.modalAsset.hide();
