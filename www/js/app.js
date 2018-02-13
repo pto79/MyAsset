@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
-.run(function($ionicPlatform, exchangeService, assetData, stockService, $rootScope) {
+.run(function($ionicPlatform, exchangeService, assetData, stockService) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -22,15 +22,28 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   });
 
-  exchangeService.get().then(function(res){
-    $rootScope.exchangeRate = res;
-  })
+  var base = JSON.parse(localStorage.getItem('exchangeRate')).base;
+  if(base == undefined)
+    exchangeService.get('SGD').then(function(res){
+      console.log(res);
+      localStorage.setItem('exchangeRate', JSON.stringify(res));
+    })
+  else
+    exchangeService.get(base).then(function(res){
+      console.log(res);
+      localStorage.setItem('exchangeRate', JSON.stringify(res));
+    })
 
+  var stockPrice = [];
   angular.forEach(assetData.all(), function(value, key) {
     if(value.type == "Stock")
     {
+      var stockData = [];
       stockService.get(value.symbol).then(function(res){
-        sessionStorage.setItem(value.symbol, res);
+        stockData.push(value.symbol);
+        stockData.push(res);
+        stockPrice.push(stockData);
+        localStorage.setItem('stockPrice', JSON.stringify(stockPrice));
       })
     }
   })

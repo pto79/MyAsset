@@ -38,16 +38,13 @@ angular.module('starter.services', [])
 
 
 .factory('exchangeService', function($http, $q) {
-  var base = localStorage.getItem('base');
-  if(base == "undefined" || base == null  || base == "")
-    exchangeService.setBase('SGD');
 
   return {
-    get: function() {
+    get: function(base) {
       var deferred = $q.defer();
       $http({
         method: "GET",
-        url: "https://api.fixer.io/latest?base=" + localStorage.getItem('base')
+        url: "https://api.fixer.io/latest?base=" + base
       }).then(function(res) {
         console.log(res);
         deferred.resolve(res.data);
@@ -56,15 +53,8 @@ angular.module('starter.services', [])
         deferred.reject(res.data);
       });
       return deferred.promise;
-    },
-    getBase: function() {
-      return localStorage.getItem('base');
-    },
-    setBase: function(base) {
-      localStorage.setItem('base', base);
     }
   };
-
 })
 
 

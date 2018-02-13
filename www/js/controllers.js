@@ -8,14 +8,18 @@ for (i = 1; i <= 12; i++) ms.push(("0" + i).slice(-2));
 
 angular.module('starter.controllers', ['ngTouch'])
 
-.controller('DashCtrl', function($scope, $ionicModal, $window, assetData, $rootScope, exchangeService) {
+.controller('DashCtrl', function($scope, $ionicModal, $window, assetData, exchangeService) {
   $scope.currentDate = {};
   $scope.currentDate.month = ("0" + (m+1)).slice(-2);
   $scope.currentDate.year = y.toString();
   $scope.chartStatus = 'pie';
+  var exchangeRate;
+  var stockPrice;
 
   $scope.$on('$ionicView.beforeEnter', function(e) {
     $scope.myAsset = assetData.all();
+    exchangeRate = JSON.parse(localStorage.getItem('exchangeRate'));
+    stockPrice = JSON.parse(localStorage.getItem('stockPrice'));
     calculate();
   })
 
@@ -28,7 +32,7 @@ angular.module('starter.controllers', ['ngTouch'])
     $scope.chartData.push('Asset Name');
     $scope.chartData.push('Amount');
     $scope.chartArray.push($scope.chartData);
-    $scope.base = exchangeService.getBase();
+    $scope.base = exchangeRate.base;
 
     angular.forEach($scope.myAsset, function(value, key) {
       var temp = 0;
@@ -36,24 +40,18 @@ angular.module('starter.controllers', ['ngTouch'])
       if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
 
         if(value.currency != $scope.base)
-          if($rootScope.exchangeRate == undefined)
-            exchangeService.get().then(function(res){
-              $rootScope.exchangeRate = res;
-              angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-                if(value.currency == currency)
-                  temp = value.amount / rate;
-              })
-            })
-          else
-            angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-              if(value.currency == currency)
-                temp = value.amount / rate;
-            })
+          angular.forEach(exchangeRate.rates, function(rate, currency) {
+            if(value.currency == currency)
+              temp = value.amount / rate;
+          })
         else
           temp = value.amount;
 
         if(value.type == 'Stock')
-            temp *= sessionStorage.getItem(value.symbol);
+          angular.forEach(stockPrice, function(price, symbol) {
+            if(symbol == value.symbol)
+            temp *= price;
+          })
 
         $scope.total += temp;
         /*
@@ -83,29 +81,25 @@ angular.module('starter.controllers', ['ngTouch'])
         }
         */
         if(value.type == "Stock")
-          $scope.chartData.push(value.type);  //+": "+value.symbol+"("+value.amount+")");
+          $scope.chartData.push(value.symbol);  //+" ("+value.amount+")");
+        else if(value.type == "Bank Saving")
+          $scope.chartData.push(value.bank);  //+": "+value.amount+"("+value.currency+")");
         else
-          $scope.chartData.push(value.type);  //+": "+value.amount+"("+value.currency+")");
+          $scope.chartData.push(value.type);
 
         if(value.currency != $scope.base)
-          if($rootScope.exchangeRate == undefined)
-            exchangeService.get().then(function(res){
-              $rootScope.exchangeRate = res;
-              angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-                if(value.currency == currency)
-                  temp = value.amount / rate;
-              })
-            })
-          else
-            angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-              if(value.currency == currency)
-                temp = value.amount / rate;
-            })
+          angular.forEach(exchangeRate.rates, function(rate, currency) {
+            if(value.currency == currency)
+              temp = value.amount / rate;
+          })
         else
           temp = value.amount;
 
         if(value.type == 'Stock') 
-            temp *= sessionStorage.getItem(value.symbol);
+          angular.forEach(stockPrice, function(price, symbol) {
+            if(symbol == value.symbol)
+            temp *= price;
+          })
 
         $scope.chartData.push(temp);
         $scope.chartArray.push($scope.chartData);
@@ -235,7 +229,12 @@ angular.module('starter.controllers', ['ngTouch'])
       stockService.get($scope.modalData.symbol)
       .then(function(res){
         console.log(res);
-        sessionStorage.setItem($scope.modalData.symbol, res);
+        var stockPrice = JSON.parse(localStorage.getItem('stockPrice'));
+        var stockData = [];
+        stockData.push($scope.modalData.symbol);
+        stockData.push(res);
+        stockPrice.push(stockData);
+        localStorage.setItem('stockPrice', JSON.stringify(stockPrice));
         assetData.add($scope.modalData);
         assetData.save();
         $scope.modalAsset.hide();
@@ -281,11 +280,11 @@ angular.module('starter.controllers', ['ngTouch'])
 })
 
 
-.controller('AccountCtrl', function($scope, $ionicPopup, assetData, $ionicModal, exchangeService, $rootScope) {
+.controller('AccountCtrl', function($scope, $ionicPopup, assetData, $ionicModal, exchangeService) {
 
   $scope.settings = {
     onlineMode: false,
-    base: exchangeService.getBase()
+    base: JSON.parse(localStorage.getItem('exchangeRate')).base
   };
 
   $ionicModal.fromTemplateUrl('templates/modal-import.html', {
@@ -341,9 +340,8 @@ angular.module('starter.controllers', ['ngTouch'])
 
   $scope.changeBase = function() {
     console.log($scope.settings.base);
-    exchangeService.setBase($scope.settings.base);
-    exchangeService.get().then(function(res){
-      $rootScope.exchangeRate = res;
+    exchangeService.get($scope.settings.base).then(function(res){
+      localStorage.setItem('exchangeRate', JSON.stringify(res));
     })
   }
 
