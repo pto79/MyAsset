@@ -212,6 +212,8 @@ angular.module('starter.controllers', ['ngTouch'])
       delete $scope.modalData.bank;
     $scope.modalData.month = ("0" + ($scope.modalData.month)).slice(-2);
     if($scope.modalData.type == "Stock") {
+      $scope.modalData.currency = "USD";
+      $scope.modalData.symbol = $scope.modalData.symbol.toUpperCase();
       stockService.get($scope.modalData.symbol)
       .then(function(res){
         console.log(res);
