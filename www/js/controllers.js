@@ -8,7 +8,7 @@ for (i = 1; i <= 12; i++) ms.push(("0" + i).slice(-2));
 
 angular.module('starter.controllers', ['ngTouch'])
 
-.controller('DashCtrl', function($scope, $ionicModal, $window, assetData, $rootScope, exchangeService) {
+.controller('DashCtrl', function($scope, $ionicModal, $window, assetData, $rootScope, exchangeService, stockService) {
   $scope.currentDate = {};
   $scope.currentDate.month = ("0" + (m+1)).slice(-2);
   $scope.currentDate.year = y.toString();
@@ -28,12 +28,13 @@ angular.module('starter.controllers', ['ngTouch'])
     $scope.chartData.push('Bank Name');
     $scope.chartData.push('Amount');
     $scope.chartArray.push($scope.chartData);
+    $scope.base = exchangeService.getBase();
 
     angular.forEach($scope.myAsset, function(value, key) {
       $scope.chartData = [];
       if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
-        if(value.type == 'Bank Saving' || value.type == 'Cash') {
-          if(value.currency != exchangeService.getBase()) {
+        if(value.type == 'Bank Saving' || value.type == 'Cash' || value.type == 'Other') {
+          if(value.currency != $scope.base) {
             console.log(value);
             angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
               if(value.currency == currency)
@@ -41,13 +42,24 @@ angular.module('starter.controllers', ['ngTouch'])
             })
           }
           else
-            $scope.total += Number(value.amount);
+            $scope.total += value.amount;
         }
-        //if(value.type == 'Stock') todo
+        if(value.type == 'Stock') {
+          stockService.get(value.symbol).then(function(res){
+            if($scope.base != "USD") //assume all stock are from usa market first
+              angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
+                if(currency == "USD")
+                  $scope.total += res * value.amount / rate;
+              })
+            else
+              $scope.total += res * value.amount;
+          })
+        }
+        /*
         var existing = false;
         angular.forEach($scope.chartArray, function(arrayData, key) {
           if(arrayData[0] == value.type) {
-            if(value.currency != exchangeService.getBase())
+            if(value.currency != $scope.base)
               angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
                 if(value.currency == currency)
                   arrayData[1] += value.amount / rate;
@@ -59,7 +71,7 @@ angular.module('starter.controllers', ['ngTouch'])
         })
         if(!existing) {
           $scope.chartData.push(value.type);
-          if(value.currency != exchangeService.getBase())
+          if(value.currency != $scope.base)
             angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
               if(value.currency == currency)
                 $scope.chartData.push(value.amount / rate);
@@ -68,8 +80,10 @@ angular.module('starter.controllers', ['ngTouch'])
             $scope.chartData.push(value.amount);
           $scope.chartArray.push($scope.chartData);
         }
-        //if(value.type == 'Stock')
-        //if(value.type == 'Other')
+        */
+        $scope.chartData.push(value.type+" ("+value.currency+")");
+        $scope.chartData.push(value.amount);
+        $scope.chartArray.push($scope.chartData);
       }
     });
     
@@ -89,21 +103,19 @@ angular.module('starter.controllers', ['ngTouch'])
           //title: $scope.total,
           //titleTextStyle: {fontSize: 20},
           //pieHole: 0.4, for donut chart
-          backgroundColor: 'gray',
+          //backgroundColor: 'gray',
           is3D: true,
           legend: {position: 'bottom'},
           chartArea: {width: '90%', height: '90%'}
         };
         var chart = new google.visualization.PieChart(document.getElementById('chart'));
-        chart.draw(data, options);
+        //chart.draw(data, options);
 
         google.visualization.events.addListener(chart, 'select', selectHandler);
         function selectHandler(e) {
           console.log('A row was selected');
         }
       }
-
-      $scope.total = exchangeService.getBase() + ": " + $scope.total.toFixed(2);
   }
 
   $scope.years = ys;

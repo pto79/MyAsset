@@ -36,31 +36,63 @@ angular.module('starter.services', [])
   };
 })
 
-.factory('exchangeService', function($http, $rootScope) {
+
+.factory('exchangeService', function($http, $rootScope, $q) {
 
   function getRate() {
+    var deferred = $q.defer();
     $http({
       method: "GET",
       url: "https://api.fixer.io/latest?base=" + localStorage.getItem('base')
     }).then(function(res) {
       console.log(res);
-      $rootScope.exchangeRate = res.data;
+      deferred.resolve(res.data);
     }, function(res) {
       console.log(res);
+      deferred.reject(res);
     });
+    return deferred.promise;
   }
 
   return {
     get: function() {
-      getRate();
-      return $rootScope.exchangeRate;
+      getRate().then(function(res){
+        $rootScope.exchangeRate = res;
+        return $rootScope.exchangeRate;
+      })
     },
     getBase: function() {
       return localStorage.getItem('base');
     },
     setBase: function(base) {
       localStorage.setItem('base', base);
-      getRate();
+      getRate().then(function(res){
+        $rootScope.exchangeRate = res;
+        return $rootScope.exchangeRate;
+      })
+    }
+  };
+
+})
+
+
+
+.factory('stockService', function($http, $q) {
+
+  return {
+    get: function(s) {
+      var deferred = $q.defer();
+      $http({
+        method: "GET",
+        url: "https://api.iextrading.com/1.0/stock/"+s+"/price"
+      }).then(function(res) {
+        console.log(res);
+        deferred.resolve(res.data);
+      }, function(res) {
+        console.log(res);
+        deferred.reject(res);
+      });
+      return deferred.promise;
     }
   };
 
