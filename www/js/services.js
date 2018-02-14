@@ -3,7 +3,7 @@ angular.module('starter.services', [])
 .factory('assetData', function() {
   // Might use a resource here that returns a JSON array
   var myAsset = localStorage.getItem('assets');
-  if(myAsset == "undefined" || myAsset == null  || myAsset == "")
+  if(myAsset == undefined || myAsset == null  || myAsset == "")
     myAsset = [];
   myAsset = JSON.parse(myAsset);
 

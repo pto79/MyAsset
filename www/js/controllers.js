@@ -29,7 +29,7 @@ angular.module('starter.controllers', ['ngTouch'])
     $scope.total = 0;
     $scope.chartArray = [];
     $scope.chartData = [];
-    $scope.chartData.push('Asset Name');
+    $scope.chartData.push('Asset Type');
     $scope.chartData.push('Amount');
     $scope.chartArray.push($scope.chartData);
     $scope.base = exchangeRate.base;
@@ -50,7 +50,7 @@ angular.module('starter.controllers', ['ngTouch'])
         if(value.type == 'Stock')
           angular.forEach(stockPrice, function(price, symbol) {
             if(symbol == value.symbol)
-            temp *= price;
+              temp *= price;
           })
 
         $scope.total += temp;
@@ -98,7 +98,7 @@ angular.module('starter.controllers', ['ngTouch'])
         if(value.type == 'Stock') 
           angular.forEach(stockPrice, function(price, symbol) {
             if(symbol == value.symbol)
-            temp *= price;
+              temp *= price;
           })
 
         $scope.chartData.push(temp);

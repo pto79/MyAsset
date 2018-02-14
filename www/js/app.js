@@ -22,27 +22,23 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   });
 
-  var base = JSON.parse(localStorage.getItem('exchangeRate')).base;
-  if(base == undefined)
+  if(localStorage.getItem('exchangeRate') == undefined || localStorage.getItem('exchangeRate') == null)
     exchangeService.get('SGD').then(function(res){
       console.log(res);
       localStorage.setItem('exchangeRate', JSON.stringify(res));
     })
   else
-    exchangeService.get(base).then(function(res){
+    exchangeService.get(JSON.parse(localStorage.getItem('exchangeRate')).base).then(function(res){
       console.log(res);
       localStorage.setItem('exchangeRate', JSON.stringify(res));
     })
 
-  var stockPrice = [];
+  var stockPrice = {};
   angular.forEach(assetData.all(), function(value, key) {
     if(value.type == "Stock")
     {
-      var stockData = [];
       stockService.get(value.symbol).then(function(res){
-        stockData.push(value.symbol);
-        stockData.push(res);
-        stockPrice.push(stockData);
+        stockPrice[value.symbol] = res;
         localStorage.setItem('stockPrice', JSON.stringify(stockPrice));
       })
     }
