@@ -29,16 +29,19 @@ angular.module('starter.controllers', ['ngTouch'])
     $scope.total = 0;
     $scope.chartArray = [];
     $scope.chartData = [];
+    $scope.base = exchangeRate.base;
+
+
+    if($scope.chartStatus == 'pie') {
     $scope.chartData.push('Asset Type');
     $scope.chartData.push('Amount');
     $scope.chartArray.push($scope.chartData);
-    $scope.base = exchangeRate.base;
 
     angular.forEach($scope.myAsset, function(value, key) {
       var temp = 0;
       $scope.chartData = [];
       if(value.month == $scope.currentDate.month && value.year == $scope.currentDate.year) {
-
+        //counting total
         if(value.currency != $scope.base)
           angular.forEach(exchangeRate.rates, function(rate, currency) {
             if(value.currency == currency)
@@ -52,34 +55,8 @@ angular.module('starter.controllers', ['ngTouch'])
             if(symbol == value.symbol)
               temp *= price;
           })
-
         $scope.total += temp;
-        /*
-        var existing = false;
-        angular.forEach($scope.chartArray, function(arrayData, key) {
-          if(arrayData[0] == value.type) {
-            if(value.currency != $scope.base)
-              angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-                if(value.currency == currency)
-                  arrayData[1] += value.amount / rate;
-              })
-            else
-              arrayData[1] += value.amount;
-            existing = true;
-          }
-        })
-        if(!existing) {
-          $scope.chartData.push(value.type);
-          if(value.currency != $scope.base)
-            angular.forEach($rootScope.exchangeRate.rates, function(rate, currency) {
-              if(value.currency == currency)
-                $scope.chartData.push(value.amount / rate);
-            })
-          else
-            $scope.chartData.push(value.amount);
-          $scope.chartArray.push($scope.chartData);
-        }
-        */
+        //prepare chart
         if(value.type == "Stock")
           $scope.chartData.push(value.symbol);  //+" ("+value.amount+")");
         else if(value.type == "Bank Saving")
@@ -135,16 +112,61 @@ angular.module('starter.controllers', ['ngTouch'])
           console.log('A row was selected');
         }
       }
+    }
+    else if($scope.chartStatus == 'column') {
+    $scope.chartData.push('Date');
+    $scope.chartData.push('Asset');
+    $scope.chartArray.push($scope.chartData);
+
+    angular.forEach($scope.myAsset, function(value, key) {
+      var existing = false;
+      $scope.chartData = [];
+      angular.forEach($scope.chartArray, function(arrayData, key) {
+        if(arrayData[0] == value.month+value.year) {
+          arrayData[1] += value.amount;
+          existing = true;
+        }
+      })
+      if(!existing) {
+        $scope.chartData.push(value.month+value.year);
+        $scope.chartData.push(value.amount);
+        $scope.chartArray.push($scope.chartData);
+      }
+    })
+    console.log($scope.chartArray);
+
+      google.charts.load("current", {packages:["corechart", 'bar']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable($scope.chartArray);
+        var options = {
+          //title: $scope.total,
+          //titleTextStyle: {fontSize: 20},
+          //pieHole: 0.4, for donut chart
+          //backgroundColor: 'gray',
+          //is3D: true,
+          //legend: { position: 'bottom' },
+          chartArea: { width: '90%', height: '90%' }
+        };
+        //var chart = new google.visualization.PieChart(document.getElementById('chart'));
+        var chart = new google.visualization.ColumnChart(document.getElementById("chart"));
+        chart.draw(data, options);
+
+        google.visualization.events.addListener(chart, 'select', selectHandler);
+        function selectHandler(e) {
+          console.log('A row was selected');
+        }
+      }
+    }
   }
 
   $scope.years = ys;
   $scope.months = ms;
 
   $scope.switchChart = function() {
-    if($scope.chartStatus == 'pie')
-      $scope.chartStatus = 'line';
-    else
-      $scope.chartStatus = 'pie';
+    $scope.chartStatus = $scope.chartStatus == 'pie'?'column':'pie';
+    calculate();
   }
 
   $scope.doSwipeLeft = function() {
@@ -280,7 +302,7 @@ angular.module('starter.controllers', ['ngTouch'])
 })
 
 
-.controller('AccountCtrl', function($scope, $ionicPopup, assetData, $ionicModal, exchangeService) {
+.controller('AccountCtrl', function($scope, $ionicPopup, assetData, $ionicModal, exchangeService, $ionicLoading) {
 
   $scope.settings = {
     onlineMode: false,
@@ -339,9 +361,11 @@ angular.module('starter.controllers', ['ngTouch'])
   }
 
   $scope.changeBase = function() {
+    $ionicLoading.show({template: 'Loading...'});
     console.log($scope.settings.base);
     exchangeService.get($scope.settings.base).then(function(res){
       localStorage.setItem('exchangeRate', JSON.stringify(res));
+      $ionicLoading.hide();
     })
   }
 

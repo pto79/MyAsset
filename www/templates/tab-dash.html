@@ -3,8 +3,8 @@
     <button class="button button-icon button-clear ion-earth" ng-click="translate()"></button>
   </ion-nav-buttons>  
   <ion-nav-buttons side="right" ng-show="false">
-    <button class="button button-icon button-clear fa fa-line-chart" ng-show="chartStatus=='pie'" ng-click="switchChart()"></button>
-    <button class="button button-icon button-clear fa fa-pie-chart" ng-show="chartStatus=='line'" ng-click="switchChart()"></button>
+    <button class="button button-icon button-clear fa fa-bar-chart" ng-show="chartStatus=='pie'" ng-click="switchChart()"></button>
+    <button class="button button-icon button-clear fa fa-pie-chart" ng-show="chartStatus=='column'" ng-click="switchChart()"></button>
   </ion-nav-buttons>
   <ion-content class="padding">
   	<div ng-show="chartStatus=='pie'" ng-swipe-left="doSwipeLeft()" ng-swipe-right="doSwipeRight()">
@@ -33,8 +33,9 @@
 	  </div>
 
 	<h2 align="center" style="margin-top: 0; margin-bottom: 0">{{base}}: {{total | number:2}}</h2>
-    <div id="chart" style="height: 400px; width: 100%; margin: auto; padding: 0px"></div>
+
     
     </div>
+    <div id="chart" style="height: 600px; width: 100%; margin: auto; padding: 0px"></div>
   </ion-content>
 </ion-view>
